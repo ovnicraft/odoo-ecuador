@@ -82,7 +82,7 @@ class Invoice(models.Model):
         }
 
     @api.one
-    @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount', 'currency_id', 'company_id')
+    @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount', 'currency_id', 'company_id')  # noqa
     def _compute_amount(self):
         self.amount_untaxed = sum(line.price_subtotal for line in self.invoice_line_ids)  # noqa
         for line in self.tax_line_ids:
@@ -95,7 +95,7 @@ class Invoice(models.Model):
                 self.amount_novat += line.base
             elif line.tax_id.tax_group_id.code == 'no_ret_ir':
                 self.amount_noret_ir += line.base
-            elif line.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv', 'ret_ir']:
+            elif line.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv', 'ret_ir']:  # noqa
                 self.amount_tax_retention += line.amount
                 if line.tax_id.tax_group_id.code == 'ret_vat_b':
                     self.amount_tax_ret_vatb += line.base
@@ -116,9 +116,9 @@ class Invoice(models.Model):
         # continue odoo code for *signed fields
         amount_total_company_signed = self.amount_total
         amount_untaxed_signed = self.amount_untaxed
-        if self.currency_id and self.currency_id != self.company_id.currency_id:
-            amount_total_company_signed = self.currency_id.compute(self.amount_total, self.company_id.currency_id)
-            amount_untaxed_signed = self.currency_id.compute(self.amount_untaxed, self.company_id.currency_id)
+        if self.currency_id and self.currency_id != self.company_id.currency_id:  # noqa
+            amount_total_company_signed = self.currency_id.compute(self.amount_total, self.company_id.currency_id)  # noqa
+            amount_untaxed_signed = self.currency_id.compute(self.amount_untaxed, self.company_id.currency_id) # noqa
         sign = self.type in ['in_refund', 'out_refund'] and -1 or 1
         self.amount_total_company_signed = amount_total_company_signed * sign
         self.amount_total_signed = self.amount_total * sign
@@ -126,22 +126,15 @@ class Invoice(models.Model):
 
     @api.multi
     def name_get(self):
-        TYPES = {
-            'out_invoice': _('Invoice'),
-            'in_invoice': _('Supplier Invoice'),
-            'out_refund': _('Refund'),
-            'in_refund': _('Supplier Refund'),
-            'liq_purchase': _('Liquid. de Compra')
-        }
         result = []
         for inv in self:
-            result.append((inv.id, "%s %s" % (inv.reference, inv.name and inv.name or '*')))
+            result.append((inv.id, "%s %s" % (inv.reference, inv.name and inv.name or '*')))  # noqa
         return result
 
     @api.one
     @api.depends('tax_line_ids.tax_id')
     def _check_retention(self):
-        TAXES = ['ret_vat_b', 'ret_vat_srv', 'ret_ir', 'no_ret_ir']
+        TAXES = ['ret_vat_b', 'ret_vat_srv', 'ret_ir', 'no_ret_ir']  # noqa
         for tax in self.tax_line_ids:
             if tax.tax_id.tax_group_id.code in TAXES:
                 self.has_retention = True
@@ -245,10 +238,9 @@ class Invoice(models.Model):
     @api.onchange('journal_id')
     def _onchange_journal_id(self):
         # Método redefinido para cargar la autorizacion de facturas de venta
-        super(AccountInvoice, self)._onchange_journal_id()
+        super(Invoice, self)._onchange_journal_id()
         if self.journal_id:
-            journal = self.env['account.journal'].browse(journal_id)
-
+            journal = self.journal_id
             if self.type == 'out_invoice' and not journal.auth_id:
                 return {
                     'warning': {
