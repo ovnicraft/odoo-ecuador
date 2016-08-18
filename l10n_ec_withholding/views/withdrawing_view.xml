@@ -145,22 +145,21 @@
                                 <label string="Comprobante" for="type"/>
                                 <div>
                                     <field name="type" class="oe_inline" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
-		                    <field name="num_document" class="oe_inline" attrs="{'required':[('to_cancel','=',False)], 'invisible':[('to_cancel','=',True)]}"/>
 		                </div>
-	                    </group>
+                            </group>
 	                </group>
 	                <notebook colspan="4">
 	                    <page string="Impuestos">
-		                <field name="tax_ids" widget="many2many" nolabel="1" domain="[('invoice_id','=',invoice_id),('tax_group','in',['ret_ir','ret_vat_b','ret_vat_srv'])]">
-		                    <tree string="Impuestos Aplicados">
-		                        <field name="invoice_id" invisible="1"/>
-
-		                    </tree>
-		                </field>
-		                <group class="oe_subtotal_footer oe_right">
-		                    <field name="amount_total" widget="monetary" class="oe_subtotal_footer_separator"/>
-		                </group>
-		                <separator string=""/>
+		                <field name="tax_ids" widget="many2many" nolabel="1"
+                                       domain="[('invoice_id','=',invoice_id),('tax_group','in',['ret_ir','ret_vat_b','ret_vat_srv'])]">
+                                    <tree string="Impuestos Aplicados">
+                                        <field name="invoice_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                                <group class="oe_subtotal_footer oe_right">
+                                    <field name="amount_total" widget="monetary" class="oe_subtotal_footer_separator"/>
+                                </group>
+                                <separator string=""/>
 	                    </page>
 	                    <page string="Info Extra">
 		                <group>
@@ -181,9 +180,7 @@
             <field name="domain">[('type','=','in_invoice')]</field>
         </record>
 
-
         <menuitem action="action_account_retention2_tree" id="menu_action_retention" parent="account.menu_finance_payables"/>
-
         <record id="action_account_retention_out_tree" model="ir.actions.act_window">
             <field name="name">Retenciones de Cliente</field>
             <field name="res_model">account.retention</field>
