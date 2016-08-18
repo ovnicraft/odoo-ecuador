@@ -918,8 +918,15 @@
             <field name="chart_template_id" ref="l10n_ec_chart.account_ec_chart_template"/>
         </record>
         <record model="account.account.template" id="20107010234">
-            <field name="name">OTRAS RETENCIONES</field>
+            <field name="name">RETENCIONES DE LA FUENTE 8%</field>
             <field name="code">20107010234</field>
+            <field name="reconcile" eval="True"/>
+            <field ref="account.data_account_type_current_liabilities" name="user_type_id" />
+            <field name="chart_template_id" ref="l10n_ec_chart.account_ec_chart_template"/>
+        </record>
+        <record model="account.account.template" id="20107010235">
+            <field name="name">OTRAS RETENCIONES</field>
+            <field name="code">20107010235</field>
             <field name="reconcile" eval="True"/>
             <field ref="account.data_account_type_current_liabilities" name="user_type_id" />
             <field name="chart_template_id" ref="l10n_ec_chart.account_ec_chart_template"/>

@@ -4,7 +4,7 @@
 
 {
     'name': 'Ecuador - Accounting Chart',
-    'version': '1.1',
+    'version': '9.0.1.1.0',
     'category': 'Localisation/Account Charts',
     'author': 'Alcides Rivera, Cristian Salamea',
     'license': 'AGPL-3',
