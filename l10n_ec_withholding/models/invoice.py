@@ -72,7 +72,7 @@ class Invoice(models.Model):
             'model': 'account.retention'
         }
         if not self.retention_id:
-            raise UserError('Aviso', u'No tiene retención')
+            raise UserError(u'No tiene retención')
         return {
             'type': 'ir.actions.report.xml',
             'report_name': 'account.retention',
@@ -128,7 +128,7 @@ class Invoice(models.Model):
     def name_get(self):
         result = []
         for inv in self:
-            result.append((inv.id, "%s %s" % (inv.reference, inv.name and inv.name or '*')))  # noqa
+            result.append((inv.id, "%s %s" % (inv.reference, inv.number and inv.number or '*')))  # noqa
         return result
 
     @api.one
@@ -230,10 +230,12 @@ class Invoice(models.Model):
         states={'draft': [('readonly', False)]},
         default='auto'
     )
-    sustento_id = fields.Many2one(
-        'account.ats.sustento',
-        string='Sustento del Comprobante'
-    )
+
+    @api.onchange('auth_inv_id')
+    def _onchange_auth(self):
+        if self.auth_inv_id:
+            if not self.auth_inv_id.is_electronic:
+                self.auth_number = self.auth_inv_id.name
 
     @api.onchange('journal_id')
     def _onchange_journal_id(self):
@@ -248,13 +250,8 @@ class Invoice(models.Model):
                         'message': u'No se ha configurado una autorización en este diario.'  # noqa
                         }
                     }
-            return {
-                'value': {
-                    'currency_id': journal.currency.id or journal.company_id.currency_id.id,  # noqa
-                    'company_id': journal.company_id.id,
-                    'auth_inv_id': journal.auth_id.id
-                }
-            }
+            self.currency_id = self.journal_id.currency_id.id or self.journal_id.company_id.currency_id.id  # noqa
+            self.auth_inv_id = journal.auth_id.id
 
     @api.multi
     def _check_invoice_number(self):
@@ -302,14 +299,6 @@ class Invoice(models.Model):
                     )
         return True
 
-#    _constraints = [
-#        (
-#            _check_invoice_number,
-#            u'Número fuera de rango de autorización activa.',
-#            [u'Número Factura']
-#        ),
-#    ]
-
     _sql_constraints = [
         (
             'unique_inv_supplier',
@@ -342,7 +331,7 @@ class Invoice(models.Model):
         TYPES_TO_VALIDATE = ['in_invoice', 'liq_purchase']
         for inv in self:
 
-            if not (inv.retention_ir or inv.retention_vat):
+            if not self.has_retention:
                 continue
 
             if inv.create_retention_type == 'no_retention':

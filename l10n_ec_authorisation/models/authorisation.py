@@ -233,6 +233,15 @@ class AccountInvoice(models.Model):
         copy=False
     )
     auth_number = fields.Char('Autorización')
+    sustento_id = fields.Many2one(
+        'account.ats.sustento',
+        string='Sustento del Comprobante'
+    )
+
+    @api.onchange('reference')
+    def _onchange_ref(self):
+        if self.reference:
+            self.reference = self.reference.zfill(9)
 
     @api.constrains('auth_number')
     def check_reference(self):
@@ -251,22 +260,8 @@ class AccountInvoice(models.Model):
 
     @api.constrains('reference')
     def check_reference(self):
-        LEN_NUMBER = 15
+        LEN_NUMBER = 9
         if not len(self.reference) == LEN_NUMBER:
             raise UserError(
                 u'El número de factura es incorrecto.'
             )
-
-    def check_invoice_number(self):
-        if self.supplier_invoice_number:
-            res = self.auth_inv_id.is_valid_number(self.supplier_invoice_number)  # noqa
-            if res:
-                self.supplier_invoice_number = self.supplier_invoice_number.zfill(9)  # noqa
-            else:
-                self.supplier_invoice_number = ''
-                return {
-                    'warning': {
-                        'title': 'Error',
-                        'message': u'El número {0} no es válido'.format(self.supplier_invoice_number)  # noqa
-                    }
-                }

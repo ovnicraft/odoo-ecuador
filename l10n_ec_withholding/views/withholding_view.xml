@@ -43,7 +43,6 @@
                     <div attrs="{'invisible': [('has_retention','=',False)]}">
                         <field name="create_retention_type" class="oe_inline"/>
                         <field name="withholding_number" class="oe_inline" attrs="{'invisible': [('create_retention_type','=','auto')]}"/>
-                        <field name="sustento_id" placeholder="Sustento" required="1" widget="selection" class="oe_inline oe_edit_only"/>
                     </div>
                     <field name="has_retention" invisible="1"/>
                 </xpath>
