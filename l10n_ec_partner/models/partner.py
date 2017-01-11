@@ -56,7 +56,7 @@ class ResPartner(models.Model):
             self.tipo_persona = '0'
         elif int(self.identifier[2]) <= 6:
             self.tipo_persona = '6'
-        elif int(self.identifier) in [6, 9]:
+        elif int(self.identifier[2]) in [6, 9]:
             self.tipo_persona = '9'
         else:
             self.tipo_persona = '0'

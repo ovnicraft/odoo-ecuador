@@ -23,3 +23,7 @@ class PartnerTest(TransactionCase):
     def test_create(self):
         self.assertEquals(self.partner_natural.identifier, '0103893962')
         self.assertEquals(self.partner_juridico.identifier, '0190416380001')
+
+    def test_search(self):
+        res = self.Partner.search([('identifier', '=', '9999999999')])
+        self.assertEquals(res.identifier, 'CONSUMIDOR FINAL')
