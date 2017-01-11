@@ -18,7 +18,7 @@ class ResPartner(models.Model):
 
     @api.model
     def update_identifiers(self):
-        res = self.search([('identifier','=',False)])
+        res = self.search([('identifier', '=', False)])
         for e in res:
             e.write({'identifier': '9999999999'})
 
@@ -26,7 +26,12 @@ class ResPartner(models.Model):
     def init(self):
         super(ResPartner, self).init()
         self.update_identifiers()
-        self._cr.execute("CREATE UNIQUE INDEX IF NOT EXISTS unique_company_partner_identifier_type on res_partner (company_id, type_identifier, identifier) WHERE type_identifier <> 'pasaporte'")
+        sql_index = """
+        CREATE UNIQUE INDEX IF NOT EXISTS
+        unique_company_partner_identifier_type on res_partner
+        (company_id, type_identifier, identifier)
+        WHERE type_identifier <> 'pasaporte'"""
+        self._cr.execute(sql_index)
 
     @api.multi
     @api.depends('identifier', 'name')
