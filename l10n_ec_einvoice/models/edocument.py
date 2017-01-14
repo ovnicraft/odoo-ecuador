@@ -4,8 +4,8 @@ import base64
 import StringIO
 from datetime import datetime
 
-from openerp import models, fields, api
-from openerp.exceptions import Warning
+from openerp import api, fields, models
+from openerp.exceptions import Warning as UserError
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 
@@ -24,7 +24,7 @@ class Edocument(models.AbstractModel):
 
     _name = 'account.edocument'
     _FIELDS = {
-        'account.invoice': 'supplier_invoice_number',
+        'account.invoice': 'invoice_number',
         'account.retention': 'name'
     }
     SriServiceObj = SriService()
@@ -152,7 +152,7 @@ class Edocument(models.AbstractModel):
             return True
         auth, number = res
         if auth is None and number:
-            raise Warning(NOT_SENT, MESSAGE_SEQUENCIAL)
+            raise UserError(NOT_SENT, MESSAGE_SEQUENCIAL)
         return True
 
     def check_date(self, date_invoice):
@@ -169,7 +169,7 @@ class Edocument(models.AbstractModel):
         dt = datetime.strptime(date_invoice, '%Y-%m-%d')
         days = (datetime.now() - dt).days
         if days > LIMIT_TO_SEND:
-            raise Warning(NOT_SENT, MESSAGE_TIME_LIMIT)
+            raise UserError(NOT_SENT, MESSAGE_TIME_LIMIT)
 
     @api.multi
     def update_document(self, auth, codes):
