@@ -6,13 +6,14 @@
     'category': 'Localization',
     'complexity': 'normal',
     'data': [
-        'edi/einvoice_edi.xml',
+        'security/ir.model.access.csv',
         'data/data_einvoice.xml',
         'data/account.epayment.csv',
-        'views/einvoice_report.xml',
+        'edi/einvoice_edi.xml',
         'views/einvoice_view.xml',
         'views/partner_view.xml',
         'views/report_einvoice.xml',
+        'views/edocument_layouts.xml',
     ],
     'depends': [
         'l10n_ec_withholding',
