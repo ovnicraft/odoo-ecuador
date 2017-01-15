@@ -19,7 +19,7 @@
 				    <span><strong>Obligado a Llevar contabilidad: </strong> SI</span>
 				</div>
 				<div class="col-xs-6">
-				    <span>RUC </span> <span t-esc="res_company.partner_id.identifier"/><br/>
+				    <span><strong>RUC </strong></span> <span t-esc="res_company.partner_id.identifier"/><br/>
 				    <span><h4 style="text-align: center;">FACTURA</h4></span><br/>
 				    <span><strong>NUMERO</strong> </span><span t-esc="o.invoice_number"/><br/>
 				    <span><strong>NUMERO DE AUTORIZACION</strong></span><br/>
@@ -82,7 +82,7 @@
 				</div>
 			    </div>
                             <t t-foreach="o.invoice_line_ids" t-as="line">
-				<div class="row" style="margin-bottom: 10px;">
+				<div class="row" style="margin-bottom: 10px; border-bottom: 1px solid darkgray;">
 				    <div class="col-xs-2" style="padding-left: 0px; text-align: left;">
 					<span t-esc="line.product_id.default_code"/>
 				    </div>
@@ -104,6 +104,102 @@
 				    </div>
 				</div>
 			    </t>
+			    <div class="row">
+				<div class="col-xs-7" style="background-color: silver;">
+				    <span><strong>Información Adicional</strong></span><br/><br/>
+				    <span><strong>Dirección: </strong></span><span t-esc="o.partner_id.street or '**'"/><br/>
+				    <span><strong>Teléfono: </strong></span><span t-esc="o.partner_id.phone or '**'"/><br/>
+				    <span><strong>Email: </strong></span><span t-esc="o.partner_id.email"/><br/>
+				</div>
+				<div class="col-xs-5">
+				    <div class="row" style="text-align: right;">
+					<div class="col-xs-2">
+					    <span></span>
+					</div>
+					<div class="col-xs-7" style="border-bottom: 1px solid darkgray;">
+					    <span><strong>Subtotal diferente de 0%</strong></span>
+					</div>
+					<div class="col-xs-3" style="border-bottom: 1px solid darkgray;">
+					<span t-field="o.amount_vat"
+					      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+					</div>
+				    </div>
+				    <div class="row" style="text-align: right;">
+					<div class="col-xs-2">
+					    <span></span>
+					</div>
+					<div class="col-xs-7" style="border-bottom: 1px solid darkgray;">
+					    <span><strong>Subtotal 0%</strong></span>
+					</div>
+					<div class="col-xs-3" style="border-bottom: 1px solid darkgray;">
+					<span t-field="o.amount_vat_cero"
+					      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+					</div>
+				    </div>
+				    <div class="row" style="text-align: right;">
+					<div class="col-xs-2">
+					    <span></span>
+					</div>
+					<div class="col-xs-7" style="border-bottom: 1px solid darkgray;">
+					    <span><strong>Subtotal No objeto de IVA</strong></span>
+					</div>
+					<div class="col-xs-3" style="border-bottom: 1px solid darkgray;">
+					<span t-field="o.amount_novat"
+					      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+					</div>
+				    </div>
+				    <div class="row" style="text-align: right;">
+					<div class="col-xs-2">
+					    <span></span>
+					</div>
+					<div class="col-xs-7" style="border-bottom: 1px solid darkgray;">
+					    <span><strong>Subtotal</strong></span>
+					</div>
+					<div class="col-xs-3" style="border-bottom: 1px solid darkgray;">
+					<span t-field="o.amount_untaxed"
+					      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+					</div>
+				    </div>
+				    <div class="row" style="text-align: right;">
+					<div class="col-xs-2">
+					    <span></span>
+					</div>
+					<div class="col-xs-7" style="border-bottom: 1px solid darkgray;">
+					    <span><strong>Total Descuento</strong></span>
+					</div>
+					<div class="col-xs-3" style="border-bottom: 1px solid darkgray;">
+					<span t-esc="o.amount_novat"
+					      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+					</div>
+				    </div>
+				    <t t-foreach="o._get_tax_amount_by_group()" t-as="amount_by_group">
+					<div class="row" style="text-align: right;">
+					    <div class="col-xs-2">
+						<span></span>
+					    </div>
+					    <div class="col-xs-7" style="border-bottom: 1px solid darkgray;">
+						<strong><span t-esc="amount_by_group[0]"/></strong>
+					    </div>
+					    <div class="col-xs-3" style="border-bottom: 1px solid darkgray;">
+						<span t-esc="amount_by_group[1]"
+						      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+					    </div>
+					</div>
+				    </t>
+				    <div class="row" style="text-align: right;">
+					<div class="col-xs-2">
+					    <span></span>
+					</div>
+					<div class="col-xs-7" style="border-bottom: 1px solid darkgray;">
+					    <strong><span>TOTAL</span></strong>
+					</div>
+					<div class="col-xs-3" style="border-bottom: 1px solid darkgray;">
+					    <span t-field="o.amount_pay"
+						  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+					</div>
+				    </div>
+				</div>
+			    </div>
 			</div>
                     </t>
                 </t>
