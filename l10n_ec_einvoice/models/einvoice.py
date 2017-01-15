@@ -190,17 +190,29 @@ class AccountInvoice(models.Model):
             auth_einvoice = self.render_authorized_einvoice(auth)
             self.update_document(auth, [access_key, emission_code])
             attach = self.add_attachment(auth_einvoice, auth)
+            message = """
+            DOCUMENTO ELECTRONICO GENERADO <br><br>
+            CLAVE DE ACCESO: %s <br>
+            NUMERO DE AUTORIZACION %s <br>
+            FECHA AUTORIZACION: %s <br>
+            ESTADO DE AUTORIZACION: %s <br>
+            AMBIENTE: %s <br>
+            """ % (
+                self.clave_acceso,
+                self.numero_autorizacion,
+                self.fecha_autorizacion,
+                self.estado_autorizacion,
+                self.ambiente
+            )
+            self.message_post(body=message)
 #            self.send_document(
 #                attachments=[a.id for a in attach],
 #                tmpl='l10n_ec_einvoice.email_template_einvoice'
 #            )
 
-    def invoice_print(self, cr, uid, ids, context=None):
-        datas = {'ids': ids, 'model': 'account.invoice'}
-        return {
-            'type': 'ir.actions.report.xml',
-            'report_name': 'account_einvoice',
-            'model': 'account.invoice',
-            'datas': datas,
-            'nodestroy': True,
-            }
+    @api.multi
+    def invoice_print(self):
+        return self.env['report'].get_action(
+            self,
+            'l10n_ec_einvoice.report_einvoice'
+        )
