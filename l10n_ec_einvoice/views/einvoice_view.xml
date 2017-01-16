@@ -34,7 +34,7 @@
           <group>
             <field name="key" required="1"/>
             <field name="used"/>
-	    <field name="company_id"/>
+            <field name="company_id"/>
           </group>
         </form>
       </field>
@@ -86,8 +86,8 @@
                 <field name="numero_autorizacion"/>
                 <field name="fecha_autorizacion"/>
                 <field name="estado_autorizacion"/>
-	        <field name="ambiente"/>
-	        <field name="autorizado_sri"/>
+                <field name="ambiente"/>
+                <field name="autorizado_sri"/>
             </xpath>
         </field>
     </record>
@@ -106,8 +106,8 @@
                 <field name="numero_autorizacion"/>
                 <field name="fecha_autorizacion"/>
                 <field name="estado_autorizacion"/>
-      	        <field name="ambiente"/>
-      	        <field name="autorizado_sri"/>
+                <field name="ambiente"/>
+                <field name="autorizado_sri"/>
             </xpath>
 
         </field>
