@@ -203,9 +203,8 @@ class Edocument(models.AbstractModel):
     def send_document(self, attachments=[], tmpl=False):
         self._logger.info('Enviando documento electronico por correo')
         tmpl = self.env.ref(tmpl)
-        self.env['email.template'].with_context({'attachment_ids': attachments}).send_mail(
+        tmpl.with_context({'attachment_ids': attachments}).send_mail(  # noqa
             self.id,
-            tmpl.id
         )
         self.sent = True
         return True

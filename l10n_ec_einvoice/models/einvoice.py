@@ -205,10 +205,10 @@ class AccountInvoice(models.Model):
                 self.ambiente
             )
             self.message_post(body=message)
-#            self.send_document(
-#                attachments=[a.id for a in attach],
-#                tmpl='l10n_ec_einvoice.email_template_einvoice'
-#            )
+            self.send_document(
+                attachments=[a.id for a in attach],
+                tmpl='l10n_ec_einvoice.email_template_einvoice'
+            )
 
     @api.multi
     def invoice_print(self):
