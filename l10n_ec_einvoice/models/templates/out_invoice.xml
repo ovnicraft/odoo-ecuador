@@ -55,7 +55,7 @@
       <descuento>{{ item['descuento'] }}</descuento>
       <precioTotalSinImpuesto>{{ item['precioTotalSinImpuesto'] }}</precioTotalSinImpuesto>
       <impuestos>
-	{% for tax in item['impuestos'] %}
+        {% for tax in item['impuestos'] %}
         <impuesto>
           <codigo>{{ tax['codigo'] }}</codigo>
           <codigoPorcentaje>{{ tax['codigoPorcentaje'] }}</codigoPorcentaje>
@@ -63,7 +63,7 @@
           <baseImponible>{{ tax['baseImponible'] }}</baseImponible>
           <valor>{{ tax['valor'] }}</valor>
         </impuesto>
-	{% endfor %}
+        {% endfor %}
       </impuestos>
     </detalle>
     {% endfor %}
