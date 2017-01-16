@@ -126,7 +126,8 @@ class AccountWithdrawing(models.Model):
             )
             return True
 
-    def retention_print(self, cr, uid, ids, context=None):
+    @api.multi
+    def retention_print(self):
         return self.env['report'].get_action(
             self,
             'l10n_ec_einvoice.report_eretention'

@@ -199,8 +199,9 @@ class Edocument(models.AbstractModel):
         )
         return attach
 
-    @api.one
-    def send_document(self, attachments=[], tmpl=False):
+    @api.multi
+    def send_document(self, attachments=None, tmpl=False):
+        self.ensure_one()
         self._logger.info('Enviando documento electronico por correo')
         tmpl = self.env.ref(tmpl)
         tmpl.with_context({'attachment_ids': attachments}).send_mail(  # noqa

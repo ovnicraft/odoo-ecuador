@@ -8,10 +8,7 @@ import logging
 from lxml import etree
 from lxml.etree import fromstring, DocumentInvalid
 
-try:
-    from suds.client import Client
-except ImportError:
-    raise ImportError('Instalar Libreria suds: pip install suds-jurko')
+from suds.client import Client
 
 from ..models import utils
 from .xades import CheckDigit
