@@ -158,7 +158,6 @@ class Edocument(models.AbstractModel):
         se realice dentro de las 24 horas posteriores a su emisión
         """
         LIMIT_TO_SEND = 5
-        NOT_SENT = u'Error de Envío'
         MESSAGE_TIME_LIMIT = u' '.join([
             u'Los comprobantes electrónicos deben',
             u'enviarse con máximo 24h desde su emisión.']
