@@ -119,5 +119,3 @@ if __name__ == '__main__':
     lang = 'en'
     amount = 30670.30
     text = amount_to_text(amount, lang)
-    print amount
-    print text
