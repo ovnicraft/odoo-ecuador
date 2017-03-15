@@ -70,8 +70,8 @@ class HrEmployee(models.Model):
             vals['name'] = self._get_name(vals['lastname'], vals['firstname'])
 
         elif vals.get('name'):
-            vals['lastname'] = self.split_name(vals['name'])['lastname']
-            vals['firstname'] = self.split_name(vals['name'])['firstname']
+            vals['lastname'] = self.split_name(vals['name'])[0]
+            vals['firstname'] = self.split_name(vals['name'])[1]
         res = super(HrEmployee, self).create(vals)
         return res
 
@@ -82,7 +82,7 @@ class HrEmployee(models.Model):
             firstname = vals.get('firstname') or self.firstname or ' '
             vals['name'] = self._get_name(lastname, firstname)
         elif vals.get('name'):
-            vals['lastname'] = self.split_name(vals['name'])['lastname']
-            vals['firstname'] = self.split_name(vals['name'])['firstname']
+            vals['lastname'] = self.split_name(vals['name'])[0]
+            vals['firstname'] = self.split_name(vals['name'])[1]
         res = super(HrEmployee, self).write(vals)
         return res
