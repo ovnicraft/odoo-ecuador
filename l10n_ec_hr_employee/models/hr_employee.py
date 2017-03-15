@@ -17,8 +17,8 @@ class HrEmployee(models.Model):
 
     @api.model
     def split_name(self, name):
-        clean_name = u" ".join(name.split(None)) if name else name
-        return clean_name, False
+        clean_name = name.split(None)
+        return clean_name
 
     @api.cr_context
     def _auto_init(self):
@@ -70,8 +70,9 @@ class HrEmployee(models.Model):
             vals['name'] = self._get_name(vals['lastname'], vals['firstname'])
 
         elif vals.get('name'):
-            vals['lastname'] = self.split_name(vals['name'])[0]
-            vals['firstname'] = self.split_name(vals['name'])[1]
+            ln, fn = self.split_name(vals['name'])
+            vals['lastname'] = ln
+            vals['firstname'] = fn
         res = super(HrEmployee, self).create(vals)
         return res
 
@@ -82,7 +83,8 @@ class HrEmployee(models.Model):
             firstname = vals.get('firstname') or self.firstname or ' '
             vals['name'] = self._get_name(lastname, firstname)
         elif vals.get('name'):
-            vals['lastname'] = self.split_name(vals['name'])[0]
-            vals['firstname'] = self.split_name(vals['name'])[1]
+            ln, fn = self.split_name(vals['name'])
+            vals['lastname'] = ln
+            vals['firstname'] = fn
         res = super(HrEmployee, self).write(vals)
         return res
