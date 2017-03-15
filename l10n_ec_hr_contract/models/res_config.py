@@ -2,7 +2,7 @@
 from odoo import fields, models
 
 
-class hr_config_settings(models.TransientModel):
+class HrConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
     _name = 'hr.config.settings'
 

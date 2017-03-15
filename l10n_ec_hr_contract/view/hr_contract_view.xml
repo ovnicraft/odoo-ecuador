@@ -25,9 +25,9 @@
             </field>
         </record>
 
-	<menuitem id="menu_resource_hr_ec"
-		  action="action_resource_calendar_hr"
-		  name="Jornada de Trabajo" parent="hr.menu_human_resources_configuration" sequence="5"/>
+        <menuitem id="menu_resource_hr_ec"
+                  action="action_resource_calendar_hr"
+                  name="Jornada de Trabajo" parent="hr.menu_human_resources_configuration" sequence="5"/>
 
         <record id="resource.resource_calendar_form" model="ir.ui.view">
             <field name="name">resource.calendar.form</field>
@@ -35,35 +35,35 @@
             <field name="arch" type="xml">
                 <form string="Working Time">
                   <sheet>
-		    <group>
+                    <group>
                       <group>
                         <field name="name"/>
                         <field name="tolerance_in" required="1"/>
                         <field name="company_id" groups="hr.group_multi_company"/>
                       </group>
-		      <group>
-			<field name="lunch_max" required="1"/>
+                      <group>
+                        <field name="lunch_max" required="1"/>
                         <label for="lunch_from" string="Duración"/>
                         <div>
                           <field name="lunch_from" required="1" widget="float_time" class="oe_inline"/> - <field name="lunch_to" required="1"  widget="float_time" class="oe_inline"/>
                         </div>
-		      </group>
-		    </group>
-		    <group string="Detalle">
+                      </group>
+                    </group>
+                    <group string="Detalle">
                       <field name="attendance_ids" nolabel="1"/>
-		    </group>
-		    <group string="Excepciones">
-		      <field name="exception_ids" nolabel="1">
-			<tree editable="bottom" colors="blue:state=='draft';gray:state=='confirm'">
-			  <field name="name"/>
-			  <field name="date"/>
-			  <field name="hour_from" widget="float_time"/>
-			  <field name="hour_to" widget="float_time"/>
-			  <field name="state"/>
-			  <button name="action_confirm" icon="gtk-go-forward" states="draft" type="object" confirm="Seguro de confirmar ?"/>
-			</tree>
-		      </field>
-		    </group>
+                    </group>
+                    <group string="Excepciones">
+                      <field name="exception_ids" nolabel="1">
+                        <tree editable="bottom" colors="blue:state=='draft';gray:state=='confirm'">
+                          <field name="name"/>
+                          <field name="date"/>
+                          <field name="hour_from" widget="float_time"/>
+                          <field name="hour_to" widget="float_time"/>
+                          <field name="state"/>
+                          <button name="action_confirm" icon="gtk-go-forward" states="draft" type="object" confirm="Seguro de confirmar ?"/>
+                        </tree>
+                      </field>
+                    </group>
                     <field name="leave_ids"/>
                   </sheet>
                 </form>
@@ -157,18 +157,18 @@
                   groups="hr.group_hr_user"
                   sequence="30"/>
 
-	<record id="view_hr_employee_ec_rl_form" model="ir.ui.view">
+        <record id="view_hr_employee_ec_rl_form" model="ir.ui.view">
           <field name="name">hr.employee.ec.rl.form</field>
           <field name="model">hr.employee</field>
           <field name="inherit_id" ref="hr_holidays.view_employee_form_leave_inherit"/>
           <field name="arch" type="xml">
             <data>
-	      <field name="remaining_leaves" position="attributes">
-		<attribute name="readonly">1</attribute>
-	      </field>
-	    </data>
-	  </field>
-	</record>
+              <field name="remaining_leaves" position="attributes">
+                <attribute name="readonly">1</attribute>
+              </field>
+            </data>
+          </field>
+        </record>
 
        <!-- HR Contract: Form View -->
        <record id="view_contract_form" model="ir.ui.view">
@@ -188,34 +188,34 @@
                            <field name="state" widget="statusbar"/>
                        </header>
                    </xpath>
-		   <field name="working_hours" position="before">
-		     <field name="age_days"/>
-		   </field>
-		   <field name="wage" position="before">
-		     <field name="wage_base_legal"/>
-		   </field>
-		   <field name="job_id" position="attributes">
-		     <attribute name="required">1</attribute>
-		     <attribute name="domain">[('state','=','recruit')]</attribute>
-		   </field>
-		   <field name="trial_date_start" position="after">
-		     <field name="base_trial_days" invisible="1"/>
-		   </field>
-		   <field name="trial_date_start" position="replace">
-		     <field name="trial_date_start" required="1" />
-		   </field>
-		   <xpath expr="//field[@name='trial_date_end']" position="attributes">
-		     <attribute name="readonly">1</attribute>
-		   </xpath>
+                   <field name="working_hours" position="before">
+                     <field name="age_days"/>
+                   </field>
+                   <field name="wage" position="before">
+                     <field name="wage_base_legal"/>
+                   </field>
+                   <field name="job_id" position="attributes">
+                     <attribute name="required">1</attribute>
+                     <attribute name="domain">[('state','=','recruit')]</attribute>
+                   </field>
+                   <field name="trial_date_start" position="after">
+                     <field name="base_trial_days" invisible="1"/>
+                   </field>
+                   <field name="trial_date_start" position="replace">
+                     <field name="trial_date_start" required="1" />
+                   </field>
+                   <xpath expr="//field[@name='trial_date_end']" position="attributes">
+                     <attribute name="readonly">1</attribute>
+                   </xpath>
                    <xpath expr="//field[@name='date_start']" position="replace">
                        <field name="date_start" class="oe_inline" />
                    </xpath>
                    <xpath expr="//field[@name='trial_date_end']" position="replace">
                        <field name="trial_date_end" class="oe_inline" attrs="{'required':[('trial_date_start','!=',False)]}"/>
                    </xpath>
-		   <xpath expr="//field[@name='type_id']" position="after">
-		       <field name="code_contract_id"/>
-		   </xpath>
+                   <xpath expr="//field[@name='type_id']" position="after">
+                       <field name="code_contract_id"/>
+                   </xpath>
                    <xpath expr="//sheet" position="after">
                         <div class="oe_chatter">
                             <field name="message_follower_ids" widget="mail_followers"/>

@@ -53,7 +53,7 @@ class HrCalendarException(models.Model):
         return True
 
 
-class hr_contract(models.Model):
+class HrContract(models.Model):
 
     _name = 'hr.contract'
     _inherit = ['hr.contract', 'mail.thread', 'ir.needaction_mixin']
@@ -67,7 +67,7 @@ class hr_contract(models.Model):
 
     @api.multi
     @api.depends('employee_id', 'state')
-    def _get_department(self):
+    def _compute_department(self):
         # TODO: revisar, debemos asegurar el departmento por contrato
         states = ['pending_done', 'done']
         for contract in self:
@@ -106,7 +106,7 @@ class hr_contract(models.Model):
     # Increased priority to override hr_simplify.
     department_id = fields.Many2one(
         'hr.department',
-        compute='_get_department',
+        compute='_compute_department',
         string="Department",
         readonly=True
     )

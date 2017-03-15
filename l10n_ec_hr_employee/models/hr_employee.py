@@ -17,7 +17,7 @@ class HrEmployee(models.Model):
 
     @api.model
     def split_name(self, name):
-        clean_name = name.split(None)
+        clean_name = name.split(None, 1)
         return clean_name
 
     @api.cr_context

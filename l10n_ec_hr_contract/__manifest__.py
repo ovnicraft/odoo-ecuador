@@ -1,17 +1,10 @@
-# -*- coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 #    Copyright (C) 2013 Michael Telahun Makonnen <mmakonnen@gmail.com>.
 #    Copyright (C) 2016 Cristian Salamea <critian.salamea@gmail.com>
 {
     'name': 'Manage Employee Contracts for Ecuador',
-    'version': '1.0',
+    'version': '10.0.0.1.0',
     'category': 'Generic Modules/Human Resources',
-    'description': """
-Employee Contract Workflow and Notifications
-============================================
-
-Easily find and keep track of employees who are nearing the end of their
-contracts and trial periods.
-    """,
     'author': "Michael Telahun Makonnen <mmakonnen@gmail.com>, "
     "Cristian Salamea <cristian.salamea@gmail.com>"
     "Odoo Community Association (OCA)",
