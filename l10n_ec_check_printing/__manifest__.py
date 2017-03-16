@@ -9,6 +9,7 @@
     'category': 'Accounting',
     'complexity': 'normal',
     'website': 'www.ayni.com.ec',
+    'license': 'AGPL-3',
     'data': [
         'views/report_check_pacifico.xml',
         'views/reports.xml',

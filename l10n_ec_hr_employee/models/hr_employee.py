@@ -18,7 +18,7 @@ class HrEmployee(models.Model):
     @api.model
     def split_name(self, name):
         clean_name = name.split(None, 1)
-        return clean_name
+        return len(clean_name) > 1 and clean_name or clean_name[0], False
 
     @api.cr_context
     def _auto_init(self):
@@ -28,7 +28,7 @@ class HrEmployee(models.Model):
     @api.model
     def _update_employee_names(self):
         employees = self.search([
-            ('firstname', '=', ' '), ('lastname', '=', ' ')])
+            '|', ('firstname', '=', ' '), ('lastname', '=', ' ')])
 
         for ee in employees:
             lastname, firstname = self.split_name(ee.name)
@@ -36,15 +36,6 @@ class HrEmployee(models.Model):
                 'firstname': firstname,
                 'lastname': lastname,
             })
-
-    @api.model
-    def _update_partner_firstname(self, employee):
-        partners = employee.mapped('user_id.partner_id')
-        for partner in employee.mapped('address_home_id'):
-            if partner not in partners:
-                partners += partner
-        partners.write({'firstname': employee.firstname,
-                        'lastname': employee.lastname})
 
     @api.model
     def _get_name(self, lastname, firstname):
@@ -71,8 +62,8 @@ class HrEmployee(models.Model):
 
         elif vals.get('name'):
             ln, fn = self.split_name(vals['name'])
-            vals['lastname'] = ln
-            vals['firstname'] = fn
+            vals['lastname'] = ln or ' '
+            vals['firstname'] = fn or ' '
         res = super(HrEmployee, self).create(vals)
         return res
 
