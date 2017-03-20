@@ -82,10 +82,8 @@ def amount_to_text(number, currency):
     number = '%.2f' % number
     list = str(number).split('.')
     start_word = english_number(int(list[0])).upper()
-    end_word = english_number(int(list[1])).upper()
     cents_number = int(list[1])
-    cents_name = (cents_number > 1) and 'CENTAVOS' or 'CENTAVOS'
-    final_result = start_word + ' con ' + '%d' % cents_number + '/100'# end_word + ' ' + cents_name
+    final_result = start_word + ' con ' + '%d' % cents_number + '/100'
     return final_result
 
 
@@ -95,7 +93,6 @@ _translate_funcs = {'en': amount_to_text}
 
 
 # TODO: we should use the country AND language (ex: septante VS soixante dix)
-# TODO: we should use en by default, but the translation func is yet to be implemented
 def amount_to_text(nbr, lang='en', currency='euro'):
     """ Converts an integer to its textual representation,
     using the language set in the context if any.
@@ -119,5 +116,3 @@ if __name__ == '__main__':
     lang = 'en'
     amount = 30670.30
     text = amount_to_text(amount, lang)
-    print amount
-    print text
