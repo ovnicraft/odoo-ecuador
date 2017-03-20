@@ -18,7 +18,7 @@ class HrEmployee(models.Model):
     @api.model
     def split_name(self, name):
         clean_name = name.split(None, 1)
-        return len(clean_name) > 1 and clean_name or clean_name[0], False
+        return len(clean_name) > 1 and clean_name or (clean_name[0], False)
 
     @api.cr_context
     def _auto_init(self):
