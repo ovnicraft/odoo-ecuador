@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_hr_calendar_exception,access_hr_calendar_exception,model_hr_calendar_exception,hr.group_hr_user,1,0,0,0
-access_hr_contract_bonus,access_hr_contract_bonus,model_hr_contract_bonus,hr.group_hr_user,1,0,0,0
