@@ -35,6 +35,7 @@
         'hr',
     ],
     'data': [
-        'views/hr_view.xml',
+        'security/ir.model.access.csv',
+        'views/hr_view.xml'
     ]
 }
