@@ -1,0 +1,20 @@
+id,compare_method,description,expression,name,sequence,type
+mis_report_kpi_activo_corriente,Percentage,ACTIVO CORRIENTE,bal[101%],activo_corriente,1,Numeric
+mis_report_kpi_pasivo_corriente,Percentage,PASIVO CORRIENTE,bal[201%],pasivo_corriente,2,Numeric
+mis_report_kpi_liquidez_corriente,Percentage,LIQUIDEZ CORRIENTE,activo_corriente / pasivo_corriente,liquidez_corriente,3,Numeric
+mis_report_kpi_activo_corriente_pa,Percentage,ACTIVO CORRIENTE,bal[101%],activo_corriente,1,Numeric
+mis_report_kpi_pasivo_corriente_pa,Percentage,PASIVO CORRIENTE,bal[201%],pasivo_corriente,2,Numeric
+mis_report_kpi_inventario,Percentage,INVENTARIO,bal[10103],inventario,3,Numeric
+mis_report_kpi_prueba_acida,Percentage,PRUEBA ACIDA,activo_corriente – inventario / pasivo_corriente,prueba_acida,4,Numeric
+mis_report_kpi_pasivo,Percentage,PASIVO,bal[2%],pasivo,4,Numeric
+mis_report_kpi_activo,Percentage,ACTIVO,bal[1%],activo,5,Numeric
+mis_report_kpi_endeudamiento_activo,Percentage,ENDEUDAMIENTO DEL ACTIVO,pasivo / activo,endeudamiento_activo,6,Numeric
+mis_report_kpi_patrimonio,Percentage,PATRIMONIO,bal[3%],patrimonio,7,Numeric
+mis_report_kpi_pasivo_ep,Percentage,PASIVO,bal[2%],pasivo,4,Numeric
+mis_report_kpi_endeudamiento_patrimonio,Percentage,ENDEUDAMIENTO PATRIMONIAL,pasivo / patrimonio,endeudamiento_patrimonio,8,Numeric
+mis_report_kpi_activo_fijo,Percentage,ACTIVO FIJO NETO,bal[102%],activo_fijo_neto,9,Numeric
+mis_report_kpi_patrimonio_eaf,Percentage,PATRIMONIO,bal[3%],patrimonio,7,Numeric
+mis_report_kpi_endeudamiento_activo_fijo,Percentage,ENDEUDAMIENTO DEL ACTIVO FIJO,patrimonio / activo_fijo_neto,endeudamiento_activo_fijo,10,Numeric
+mis_report_kpi_activo_apalacamiento,Percentage,ACTIVO,bal[1%],activo,5,Numeric
+mis_report_kpi_patrimonio_apalancamiento,Percentage,PATRIMONIO,bal[3%],patrimonio,7,Numeric
+mis_report_kpi_apalancamiento,Percentage,APALANCAMIENTO,activo / patrimonio,apalancamiento,11,Numeric
