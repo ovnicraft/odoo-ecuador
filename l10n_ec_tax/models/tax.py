@@ -24,7 +24,6 @@ class AccountInvoiceTax(models.Model):
         store=True,
         string='Grupo'
     )
-    base = fields.Monetary(store=True)
     code = fields.Char(
         related='tax_id.description',
         string='Código',
