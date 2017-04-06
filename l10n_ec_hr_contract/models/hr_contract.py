@@ -10,53 +10,23 @@ from dateutil.relativedelta import relativedelta
 
 from odoo import api, models, fields
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
+from odoo.exceptions import Warning as UserError
 
 _l = logging.getLogger(__name__)
-
-
-class ResourceCalendar(models.Model):
-    _inherit = 'resource.calendar'
-
-    lunch_from = fields.Float('Salida Almuerzo')
-    lunch_to = fields.Float('Entrada Almuerzo')
-    lunch_max = fields.Integer('Límite para Almuerzo (h)')
-    tolerance_in = fields.Integer('Tolerancia de Retraso en ingreso')
-    exception_ids = fields.One2many(
-        'hr.calendar.exception',
-        'calendar_id',
-        string='Excepciones'
-    )
-
-
-class HrCalendarException(models.Model):
-    _name = 'hr.calendar.exception'
-    _order = 'date ASC'
-
-    name = fields.Char('Motivo', size=64, required=True)
-    date = fields.Date('Fecha que aplica', required=True)
-    hour_from = fields.Float('Trabajar desde')
-    hour_to = fields.Float('Trabajar hasta')
-    state = fields.Selection(
-        [
-            ('draft', 'Borrador'),
-            ('confirm', 'Confirmado')
-        ],
-        required=True,
-        string='Estado',
-        readonly=True
-    )
-    calendar_id = fields.Many2one('resource.calendar', 'Calendario')
-
-    @api.multi
-    def action_confirm(self):
-        self.write({'state': 'confirm'})
-        return True
 
 
 class HrContract(models.Model):
 
     _name = 'hr.contract'
     _inherit = ['hr.contract', 'mail.thread', 'ir.needaction_mixin']
+
+    @api.multi
+    def unlink(self):
+        for contract in self:
+            if not contract.state == 'draft':
+                raise UserError('No puede eliminar el registro.')
+        super(HrContract, self).unlink()
+        return True
 
     @api.multi
     def name_get(self):
@@ -87,6 +57,7 @@ class HrContract(models.Model):
             days = de - ds
             self.age_days = days.days
 
+    name = fields.Char(default='CONT-TEMP')
     state = fields.Selection(
         [
             ('draft', 'Borrador'),
@@ -232,13 +203,13 @@ class HrContract(models.Model):
         trial_end = d.strftime(DEFAULT_SERVER_DATE_FORMAT)
         self.trial_date_end = trial_end
 
-#    @api.onchange('job_id')
-#    def onchange_job(self):
-#        _l.debug('hr_contract_state: onchange_job()')
-#        res = False
-#        if self.state != 'draft':
-#            self.job_id = res
-#        return super(hr_contract, self).onchange_job()
+    @api.multi
+    def action_number(self):
+        sequence = self.env['ir.sequence']
+        for contract in self:
+            code = sequence.next_by_code('hr.contract')
+            contract.write({'name': code})
+        return True
 
     @api.multi
     def signal_confirm(self):
@@ -250,6 +221,7 @@ class HrContract(models.Model):
         self.state_trial()
         self.update_job()
         self.update_holidays()
+        self.action_number()
 
     @api.multi
     def condition_trial_period(self):
@@ -383,6 +355,13 @@ class HrContract(models.Model):
             obj.write(vals)
         return True
 
+#    @api.onchange('job_id')
+#    def onchange_job(self):
+#        _l.debug('hr_contract_state: onchange_job()')
+#        res = False
+#        if self.state != 'draft':
+#            self.job_id = res
+#        return super(hr_contract, self).onchange_job()
 
 class HrContractBonus(models.Model):
     _name = 'hr.contract.bonus'

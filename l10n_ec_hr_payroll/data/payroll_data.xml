@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+  <data>
+
+    <record id="hr_payroll.GROSS" model="hr.salary.rule.category">
+      <field name="name">Ingresos Aportables</field>
+      <field name="code">APT</field>
+    </record>
+
+    <record id="hr_payroll.BGROSS" model="hr.salary.rule.category">
+      <field name="name">Base Ingresos Aportables</field>
+      <field name="code">BAPT</field>
+    </record>
+
+    <record id="NOAPT" model="hr.salary.rule.category">
+      <field name="name">Ingresos No Aportables</field>
+      <field name="code">NOAPT</field>
+    </record>
+
+    <record id="hr_payroll.ALW" model="hr.salary.rule.category">
+      <field name="name">INGRESOS</field>
+      <field name="code">ING</field>
+    </record>
+
+    <record id="hr_payroll.DED" model="hr.salary.rule.category">
+      <field name="name">Egresos</field>
+      <field name="code">EGR</field>
+    </record>
+
+    <record id="hr_payroll.NET" model="hr.salary.rule.category">
+      <field name="name">Total</field>
+      <field name="code">NET</field>
+    </record>
+
+    <record id="PROV" model="hr.salary.rule.category">
+      <field name="name">Provisiones por Ley</field>
+      <field name="code">PROV</field>
+    </record>
+
+    <record id="hr_payroll.hr_rule_basic" model="hr.salary.rule">
+      <field name="name">Remuneración</field>
+      <field name="code">BASIC</field>
+      <field name="category_id" ref="hr_payroll.BASIC"/>
+      <field name="sequence" eval="10"/>
+      <field name="amount_select">percentage</field>
+      <field name="amount_percentage_base">worked_days.WORK100.number_of_hours * (contract.wage / 160)</field>
+      <field name="amount_percentage">100.00</field>
+    </record>
+
+    <record id="regla_decimo_tercero" model="hr.salary.rule">
+      <field name="name">DECIMO TERCERO</field>
+      <field name="sequence" eval="13"/>
+      <field name="code">DECIMO3</field>
+      <field name="category_id" ref="PROV"/>
+      <field name="condition_select">python</field>
+      <field name="condition_python">result = contract.pay_decimo3</field>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = contract.wage / 12</field>
+    </record>
+
+    <record id="regla_decimo_cuarto" model="hr.salary.rule">
+      <field name="name">DECIMO CUARTO</field>
+      <field name="sequence" eval="14"/>
+      <field name="code">DECIMO4</field>
+      <field name="category_id" ref="PROV"/>
+      <field name="condition_select">python</field>
+      <field name="condition_python">result = contract.pay_decimo4</field>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = contract.wage_base_legal / 12</field>
+    </record>
+
+    <record id="regla_fondo_reserva" model="hr.salary.rule">
+      <field name="name">FONDOS DE RESERVA</field>
+      <field name="sequence" eval="15"/>
+      <field name="code">FRES</field>
+      <field name="category_id" ref="PROV"/>
+      <field name="condition_select">python</field>
+      <field name="condition_python">result = contract.age_days > 365 and contract.pay_fondo_reserva</field>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = categories.BAPT * 0.0833</field>
+    </record>
+
+    <record id="regla_horas_extras_25" model="hr.salary.rule">
+      <field name="name">Horas Extras 25%</field>
+      <field name="code">WORK125</field>
+      <field name="category_id" ref="hr_payroll.GROSS"/>
+      <field name="sequence" eval="30"/>
+      <field name="amount_select">percentage</field>
+      <field name="amount_percentage_base">worked_days.WORK125.number_of_hours * (contract.wage / 160)</field>
+      <field name="amount_percentage">125.00</field>
+    </record>
+
+    <record id="regla_horas_extras_50" model="hr.salary.rule">
+      <field name="name">Horas Extras 50%</field>
+      <field name="code">WORK150</field>
+      <field name="category_id" ref="hr_payroll.GROSS"/>
+      <field name="sequence" eval="40"/>
+      <field name="amount_select">percentage</field>
+      <field name="amount_percentage_base">worked_days.WORK150.number_of_hours * (contract.wage / 160)</field>
+      <field name="amount_percentage">150.00</field>
+    </record>
+
+    <record id="regla_horas_extras_100" model="hr.salary.rule">
+      <field name="name">Horas Extras 100%</field>
+      <field name="code">WORK200</field>
+      <field name="category_id" ref="hr_payroll.GROSS"/>
+      <field name="sequence" eval="50"/>
+      <field name="amount_select">percentage</field>
+      <field name="amount_percentage_base">worked_days.WORK200.number_of_hours * (contract.wage / 160)</field>
+      <field name="amount_percentage">200.00</field>
+    </record>
+
+    <record id="regla_extra_income" model="hr.salary.rule">
+      <field name="name">BONOS</field>
+      <field name="code">BONUS</field>
+      <field name="category_id" ref="hr_payroll.GROSS"/>
+      <field name="sequence" eval="55"/>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = sum([i.amount for i in contract.bonus_ids])</field>
+    </record>
+
+    <record id="regla_sueldo_variable2" model="hr.salary.rule">
+      <field name="name">Sueldo Variable2</field>
+      <field name="code">SUEVAR2</field>
+      <field name="category_id" ref="hr_payroll.GROSS"/>
+      <field name="sequence" eval="60"/>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = 0</field>
+    </record>
+
+    <record id="hr_payroll.hr_rule_taxable" model="hr.salary.rule">
+      <field name="name">Base de Aportacion</field>
+      <field name="code">BAPT</field>
+      <field name="category_id" ref="hr_payroll.BGROSS"/>
+      <field name="sequence" eval="100"/>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = categories.BASIC + categories.APT</field>
+    </record>
+
+    <record id="regla_aporte_personal_iess" model="hr.salary.rule">
+      <field name="name">Aporte Personal IESS - Trabajadores</field>
+      <field name="code">IESS_PER</field>
+      <field name="category_id" ref="hr_payroll.DED"/>
+      <field name="sequence" eval="210"/>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = categories.BAPT * 0.0945</field>
+    </record>
+
+    <record id="regla_aporte_patronal_iess" model="hr.salary.rule">
+      <field name="name">Aporte Patronal IESS</field>
+      <field name="code">IESS_PATR</field>
+      <field name="category_id" ref="PROV"/>
+      <field name="sequence" eval="220"/>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = categories.BAPT * 0.1115</field>
+    </record>
+
+    <record id="regla_prov_vacaciones" model="hr.salary.rule">
+      <field name="name">Provision de Vacaciones</field>
+      <field name="code">PROV_VACA</field>
+      <field name="category_id" ref="PROV"/>
+      <field name="sequence" eval="230"/>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = categories.BAPT / 24.0</field>
+    </record>
+
+    <record id="regla_iess_quirografario" model="hr.salary.rule">
+      <field name="name">Prestamo Quirografario</field>
+      <field name="code">PRES_QUIRO</field>
+      <field name="category_id" ref="hr_payroll.DED"/>
+      <field name="sequence" eval="232"/>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = contract.p_quirografario</field>
+    </record>
+
+    <record id="regla_iess_hipotecario" model="hr.salary.rule">
+      <field name="name">Prestamo Hipotecario</field>
+      <field name="code">PRES_HIPO</field>
+      <field name="category_id" ref="hr_payroll.DED"/>
+      <field name="sequence" eval="233"/>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = contract.p_hipotecario</field>
+    </record>
+
+    <record id="regla_plan_celular" model="hr.salary.rule">
+      <field name="name">Plan Celular</field>
+      <field name="code">P_CEL</field>
+      <field name="category_id" ref="hr_payroll.DED"/>
+      <field name="sequence" eval="234"/>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = 0</field>
+    </record>
+
+     <record id="regla_plan_seguro" model="hr.salary.rule">
+      <field name="name">Plan Seguro Privado</field>
+      <field name="code">P_SEGPRIV</field>
+      <field name="category_id" ref="hr_payroll.DED"/>
+      <field name="sequence" eval="235"/>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = 0</field>
+    </record>
+
+    <record id="regla_otros_descuentos" model="hr.salary.rule">
+      <field name="name">Otros Descuentos</field>
+      <field name="code">OTROSDESC</field>
+      <field name="category_id" ref="hr_payroll.DED"/>
+      <field name="sequence" eval="236"/>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = contract.otros_descuentos</field>
+    </record>
+
+    <record id="regla_anticipo_sueldo" model="hr.salary.rule">
+      <field name="name">Anticipo Sueldo</field>
+      <field name="code">ANTSUELDO</field>
+      <field name="category_id" ref="hr_payroll.DED"/>
+      <field name="sequence" eval="237"/>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = contract.anticipo_sueldo</field>
+    </record>
+
+    <record id="regla_sueldo_variable" model="hr.salary.rule">
+      <field name="name">Sueldo Variable</field>
+      <field name="code">SUEVAR</field>
+      <field name="category_id" ref="hr_payroll.DED"/>
+      <field name="sequence" eval="238"/>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = 0</field>
+    </record>
+
+
+    <!-- no aportable en caso que eliga recibir decimos mesualizado -->
+
+    <record id="regla_decimo3_mes" model="hr.salary.rule">
+      <field name="name">DECIMO TERCERO MENSUALIZADO</field>
+      <field name="sequence" eval="13"/>
+      <field name="code">DECIMO3M</field>
+      <field name="category_id" ref="NOAPT"/>
+      <field name="condition_select">python</field>
+      <field name="condition_python">result = not contract.pay_decimo3</field>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = contract.wage / 12</field>
+    </record>
+
+    <record id="regla_decimo4_mes" model="hr.salary.rule">
+      <field name="name">DECIMO CUARTO MENSUALIZADO</field>
+      <field name="sequence" eval="13"/>
+      <field name="code">DECIMO4M</field>
+      <field name="category_id" ref="NOAPT"/>
+      <field name="condition_select">python</field>
+      <field name="condition_python">result = not contract.pay_decimo4</field>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = contract.wage_base_legal / 12</field>
+    </record>
+
+    <record id="regla_fondo_reserva_mes" model="hr.salary.rule">
+      <field name="name">FONDO RESERVA MENSUALIZADO</field>
+      <field name="sequence" eval="13"/>
+      <field name="code">FRESM</field>
+      <field name="category_id" ref="NOAPT"/>
+      <field name="condition_select">python</field>
+      <field name="condition_python">result = not contract.pay_fondo_reserva and contract.age_days > 365</field>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = categories.BAPT * 0.0833</field>
+    </record>
+
+    <record id="hr_payroll.hr_rule_net" model="hr.salary.rule">
+      <field name="name">TOTAL</field>
+      <field name="sequence" eval="500"/>
+      <field name="code">NET</field>
+      <field name="category_id" ref="hr_payroll.NET"/>
+      <field name="condition_select">none</field>
+      <field name="amount_select">code</field>
+      <field name="amount_python_compute">result = categories.BAPT + categories.NOAPT - categories.EGR</field>
+    </record>
+
+    <record id="hr_payroll.structure_base" model="hr.payroll.structure">
+        <field name="code">COD_TRABAJO</field>
+        <field name="name">CODIGO DE TRABAJO</field>
+        <field eval="[(6, 0, [ref('hr_payroll.hr_rule_basic'),
+         ref('regla_decimo_tercero'),
+         ref('regla_decimo_cuarto'),
+         ref('regla_fondo_reserva'),
+         ref('regla_aporte_personal_iess'),
+         ref('regla_aporte_patronal_iess'),
+         ref('regla_prov_vacaciones'),
+         ref('regla_decimo3_mes'),
+         ref('regla_decimo4_mes'),
+         ref('regla_fondo_reserva_mes'),
+         ref('regla_anticipo_sueldo'),
+         ref('regla_extra_income'),
+         ref('regla_iess_quirografario'),
+         ref('regla_iess_hipotecario'),
+         ref('regla_otros_descuentos'),
+         ref('hr_payroll.hr_rule_net'),
+         ref('hr_payroll.hr_rule_taxable'),ref('hr_payroll.hr_rule_net')])]" name="rule_ids"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+
+    <record id="structure_loep" model="hr.payroll.structure">
+        <field name="code">LOEP</field>
+        <field name="name">LOEP</field>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+
+
+  </data>
+</openerp>

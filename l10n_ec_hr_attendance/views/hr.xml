@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+    <record id="view_hr_attendance_ec_tree" model="ir.ui.view">
+      <field name="model">hr.attendance</field>
+      <field name="inherit_id" ref="hr_attendance.view_attendance_tree"/>
+      <field name="arch" type="xml">
+          <field name="check_out" position="after">
+              <field name="no_valid"/>
+          </field>
+      </field>
+    </record>
+
+
+    <record id="view_hr_attendance_ec_search" model="ir.ui.view">
+      <field name="model">hr.attendance</field>
+      <field name="inherit_id" ref="hr_attendance.hr_attendance_view_filter"/>
+      <field name="arch" type="xml">
+          <field name="employee_id" position="after">
+              <field name="no_valid"/>
+          </field>
+      </field>
+    </record>
+
+        <record id="action_resource_calendar_hr" model="ir.actions.act_window">
+            <field name="name">Horarios de Trabajo</field>
+            <field name="res_model">resource.calendar</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="resource.view_resource_calendar_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Define la jornada de trabajo para los empleados.
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_resource_hr_ec"
+                  action="action_resource_calendar_hr"
+                  name="Jornada de Trabajo" parent="hr.menu_human_resources_configuration" sequence="5"/>
+
+        <record id="resource.resource_calendar_form" model="ir.ui.view">
+            <field name="name">resource.calendar.form</field>
+            <field name="model">resource.calendar</field>
+            <field name="arch" type="xml">
+                <form string="Working Time">
+                  <sheet>
+                    <group>
+                      <group>
+                        <field name="name"/>
+                        <field name="tolerance_in" required="1"/>
+                        <field name="tolerance_out" required="1"/>
+                        <field name="company_id" groups="hr.group_multi_company"/>
+                      </group>
+                      <group>
+                        <field name="lunch_max" required="1" widget="float_time"/>
+                        <label for="lunch_from" string="Duración"/>
+                        <div>
+                          <field name="lunch_from" required="1" widget="float_time" class="oe_inline"/> - <field name="lunch_to" required="1"  widget="float_time" class="oe_inline"/>
+                        </div>
+                      </group>
+                    </group>
+                    <group string="Detalle">
+                      <field name="attendance_ids" nolabel="1"/>
+                    </group>
+                    <group string="Excepciones">
+                      <field name="exception_ids" nolabel="1">
+                        <tree editable="bottom" colors="blue:state=='draft';gray:state=='confirm'">
+                          <field name="name"/>
+                          <field name="date"/>
+                          <field name="hour_from" widget="float_time"/>
+                          <field name="hour_to" widget="float_time"/>
+                          <field name="state"/>
+                          <button name="action_confirm" icon="gtk-go-forward" states="draft" type="object" confirm="Seguro de confirmar ?"/>
+                        </tree>
+                      </field>
+                    </group>
+                    <field name="leave_ids"/>
+                  </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_hr_register_inout" model="ir.ui.view">
+            <field name="name">view.hr.register.inout.form</field>
+            <field name="model">hr.register.inout</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group string="Rango de Consulta" states="draft">
+                        <group>
+                            <field name="date_start"/>
+                        </group>
+                        <group>
+                            <field name="date_end"/>
+                            <field name="calendar_ids" widget="many2many_checkboxes"/>
+                        </group>
+                        <field name="path"/>
+                    </group>
+                    <group>
+                        <field name="file_errors"/>
+                    </group>
+                    <footer>
+                        <field name="state" widget="statusbar"/>
+                        <button string="Importar" class="btn-primary" name="action_register" type="object" states="draft"/>
+                        <button string="Cerrar" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+            <record id="action_hr_register_inout" model="ir.actions.act_window">
+                <field name="name">Importar Marcaciones</field>
+                <field name="res_model">hr.register.inout</field>
+                <field name="view_type">form</field>
+                <field name="view_mode">form</field>
+                <field name="target">new</field>
+            </record>
+
+            <menuitem action="action_hr_register_inout" id="menu_action_hr_register_inout" parent="hr_attendance.menu_hr_attendance_manage_attendances"/>
+
+    </data>
+</odoo>

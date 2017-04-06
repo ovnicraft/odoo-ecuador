@@ -20,6 +20,7 @@
     'data': [
         'security/ir.model.access.csv',
         'data/hr_data.xml',
+        'data/hr_sequence.xml',
         'data/hr.contract.commision.csv',
         'data/hr.contract.branch.csv',
         'data/hr.contract.code.csv',

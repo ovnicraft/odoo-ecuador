@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+
+        <record id="view_contract_provs_form" model="ir.ui.view">
+            <field name="name">hr.contract.provs.form</field>
+            <field name="model">hr.contract</field>
+	    <field name="inherit_id" ref="hr_payroll.hr_contract_form_inherit"/>
+            <field name="arch" type="xml">
+	        <field name="struct_id" position="after">
+	            <field name="pay_decimo3"/>
+                    <field name="pay_decimo4"/>
+                    <field name="pay_fondo_reserva"/>
+                    <field name="pay_asume_iess"/>
+	        </field>
+	    </field>
+        </record>
+
+        <record id="view_salary_rule_account" model="ir.ui.view">
+            <field name="name">view.salary.rule.account</field>
+            <field name="model">hr.salary.rule</field>
+	    <field name="inherit_id" ref="hr_payroll_account.hr_salary_rule_form_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[3]" position="replace">
+                    <page string="Administracion Financiera">
+                        <group string="Configuración Simple">
+                            <field name="account_debit"/>
+                            <field name="account_credit"/>
+                            <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
+                            <field name="account_tax_id"/>
+                        </group>
+                        <group string="Configuración Dinámica">
+                            <field name="account_ids" nolabel="1">
+                                <tree editable="top">
+                                    <field name="department_id"/>
+                                    <field name="account_debit_id"/>
+                                    <field name="account_credit_id"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

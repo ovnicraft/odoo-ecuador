@@ -55,6 +55,14 @@ class HrEmployee(models.Model):
         "Lastname", required=True, default=_firstname_default)
     identification_id = fields.Char(size=10)
 
+    _sql_constraints = [
+        (
+            'indetification_id_unique',
+            'unique(identification_id)',
+            'El identificador es único.'
+        )
+    ]
+
     @api.model
     def create(self, vals):
         if vals.get('firstname') and vals.get('lastname'):
