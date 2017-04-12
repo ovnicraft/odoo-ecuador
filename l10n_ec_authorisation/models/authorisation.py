@@ -244,8 +244,8 @@ class AccountInvoice(models.Model):
         emitir el documento.
         """
         super(AccountInvoice, self)._onchange_partner_id()
-        if self.type not in self._DOCUMENTOS_EMISION:
-            self.auth_inv_id = self.partner_id.get_authorisation(self.type)
+        if self.type in self._DOCUMENTOS_EMISION:
+            self.auth_inv_id = self.journal_id.auth_out_invoice_id.id
 
     @api.one
     @api.depends(
@@ -335,17 +335,17 @@ class AccountInvoice(models.Model):
     @api.multi
     def action_number(self):
         # TODO: ver donde incluir el metodo de numeracion
-        self.ensure_one()
-        if self.type not in ['out_invoice', 'liq_purchase', 'out_refund']:
-            return
-        number = self.internal_inv_number
-        if not self.auth_inv_id:
-            # asegura la autorizacion en el objeto
-            self._onchange_partner_id()
-        if not number:
-            sequence = self.auth_inv_id.sequence_id
-            number = sequence.next_by_id()
-        self.write({'reference': number, 'internal_inv_number': number})
+        for inv in self:
+            if inv.type not in ['out_invoice', 'liq_purchase', 'out_refund']:
+                return
+            number = inv.internal_inv_number
+            if not inv.auth_inv_id:
+                # asegura la autorizacion en el objeto
+                inv._onchange_partner_id()
+            if not number:
+                sequence = inv.auth_inv_id.sequence_id
+                number = sequence.next_by_id()
+                inv.write({'reference': number, 'internal_inv_number': number})
 
     @api.multi
     def action_invoice_open(self):

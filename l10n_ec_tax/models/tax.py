@@ -14,6 +14,10 @@ class AccountInvoiceTax(models.Model):
 
     _inherit = 'account.invoice.tax'
 
+    @api.depends('tax_id')
+    def _compute_base_amount(self):
+        super(AccountInvoiceTax, self)._compute_base_amount()
+
     fiscal_year = fields.Char(
         'Ejercicio Fiscal',
         size=4,
@@ -35,6 +39,7 @@ class AccountInvoiceTax(models.Model):
         'Retención',
         index=True
     )
+    base = fields.Monetary(compute='_compute_base_amount', store=True)
 
 
 class AccountTaxGroup(models.Model):
@@ -120,7 +125,7 @@ class ReportVatPartner(models.Model):
         )
         sql = """
         CREATE OR REPLACE VIEW report_vat_partner as (
-        SELECT min(ait.id) as id, ai.date as date,
+        SELECT min(ait.id) as id, ait.tax_id, ai.date as date,
         ai.partner_id as partner_id, ai.type as type, ait.code as code,
         ait.name as name, ait.group_id as tax_group, SUM(ait.base) as base,
         ABS(SUM(amount)) AS total
@@ -130,8 +135,8 @@ class ReportVatPartner(models.Model):
         AND ai.type in ('in_invoice', 'out_invoice',
         'out_refund', 'in_refund', 'liq_purchase')
         GROUP BY ait.group_id, ait.name, ai.type,
-        ai.partner_id, ai.date, ait.code, ait.base
-        ORDER BY type
+        ai.partner_id, ai.date, ait.code, ait.base, ait.tax_id
+        ORDER BY code
         )
         """
         self._cr.execute(sql)
@@ -147,6 +152,10 @@ class ReportVatPartner(models.Model):
             ('in_refund', 'NC Prov.'),
             ('liq_purchase', 'Liq. de Compra')
         ], 'Tipo'
+    )
+    tax_id = fields.Many2one(
+        'account.tax',
+        'Impuesto'
     )
     code = fields.Char('Codigo')
     tax_group = fields.Many2one('account.tax.group', 'Grupo')
