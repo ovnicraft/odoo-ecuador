@@ -68,19 +68,19 @@ class AccountWithdrawing(models.Model):
         readonly=True,
         states=STATES_VALUE,
         copy=False
-        )
+    )
     internal_number = fields.Char(
         'Número Interno',
         size=64,
         readonly=True,
         copy=False
-        )
+    )
     manual = fields.Boolean(
         'Numeración Manual',
         readonly=True,
         states=STATES_VALUE,
         default=True
-        )
+    )
     auth_id = fields.Many2one(
         'account.authorisation',
         'Autorizacion',
@@ -88,14 +88,14 @@ class AccountWithdrawing(models.Model):
         states=STATES_VALUE,
         domain=[('in_type', '=', 'interno')],
         default=_default_authorisation
-        )
+    )
     type = fields.Selection(
         related='invoice_id.type',
         string='Tipo Comprobante',
         readonly=True,
         store=True,
         default=_default_type
-        )
+    )
     in_type = fields.Selection(
         [
             ('ret_in_invoice', u'Retención a Proveedor'),
@@ -104,7 +104,7 @@ class AccountWithdrawing(models.Model):
         string='Tipo',
         readonly=True,
         default=_get_in_type
-        )
+    )
     date = fields.Date(
         'Fecha Emision',
         readonly=True,
@@ -117,7 +117,7 @@ class AccountWithdrawing(models.Model):
         readonly=True,
         states=STATES_VALUE,
         copy=False
-        )
+    )
     invoice_id = fields.Many2one(
         'account.invoice',
         string='Documento',
@@ -126,27 +126,27 @@ class AccountWithdrawing(models.Model):
         states=STATES_VALUE,
         domain=[('state', '=', 'open')],
         copy=False
-        )
+    )
     partner_id = fields.Many2one(
         'res.partner',
         string='Empresa',
         required=True,
         readonly=True,
         states=STATES_VALUE
-        )
+    )
     move_id = fields.Many2one(
         related='invoice_id.move_id',
         string='Asiento Contable',
         readonly=True,
         store=True,
         copy=False
-        )
+    )
     move_ret_id = fields.Many2one(
         'account.move',
         string='Asiento Retención',
         readonly=True,
         copy=False
-        )
+    )
     state = fields.Selection(
         [
             ('draft', 'Borrador'),
@@ -156,7 +156,7 @@ class AccountWithdrawing(models.Model):
         readonly=True,
         string='Estado',
         default='draft'
-        )
+    )
     currency_id = fields.Many2one(
         'res.currency', string='Currency',
         required=True,
@@ -169,12 +169,12 @@ class AccountWithdrawing(models.Model):
         string='Total',
         store=True,
         readonly=True
-        )
+    )
     to_cancel = fields.Boolean(
         string='Para anulación',
         readonly=True,
         states=STATES_VALUE
-        )
+    )
     company_id = fields.Many2one(
         'res.company',
         'Company',
@@ -183,7 +183,7 @@ class AccountWithdrawing(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
         default=lambda self: self.env['res.company']._company_default_get('account.invoice')  # noqa
-        )
+    )
 
     _sql_constraints = [
         (

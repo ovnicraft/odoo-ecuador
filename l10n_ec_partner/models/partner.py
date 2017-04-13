@@ -92,7 +92,7 @@ class ResPartner(models.Model):
             ('cedula', 'CEDULA'),
             ('ruc', 'RUC'),
             ('pasaporte', 'PASAPORTE')
-            ],
+        ],
         'Tipo ID',
         required=True,
         default='pasaporte'

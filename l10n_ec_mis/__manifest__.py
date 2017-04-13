@@ -7,7 +7,7 @@
     'depends': [
         'account_accountant',
         'mis_builder',
-        ],
+    ],
     'author': 'Cristian Salamea.',
     'website': 'http://www.ayni.com.ec',
     'data': [

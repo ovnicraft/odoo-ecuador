@@ -48,7 +48,7 @@ class AccountInvoice(models.Model):
             'importeTotal': '{:.2f}'.format(invoice.amount_pay),
             'moneda': 'DOLAR',
             'formaPago': invoice.epayment_id.code,
-            'valorRetIva': '{:.2f}'.format(invoice.taxed_ret_vatsrv+invoice.taxed_ret_vatb),  # noqa
+            'valorRetIva': '{:.2f}'.format(invoice.taxed_ret_vatsrv + invoice.taxed_ret_vatb),  # noqa
             'valorRetRenta': '{:.2f}'.format(invoice.amount_tax_ret_ir)
         }
         if company.company_registry:
@@ -66,7 +66,7 @@ class AccountInvoice(models.Model):
                     'baseImponible': '{:.2f}'.format(tax.base),
                     'tarifa': tax.percent_report,
                     'valor': '{:.2f}'.format(tax.amount)
-                    }
+                }
                 totalConImpuestos.append(totalImpuesto)
 
         infoFactura.update({'totalConImpuestos': totalConImpuestos})

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<openerp>
+<odoo>
   <data>
     <!-- Compania -->
     <record id="view_res_company_einvoice_form" model="ir.ui.view">
@@ -29,5 +29,6 @@
         </notebook>
       </field>
     </record>
+
   </data>
-</openerp>
+</odoo>
