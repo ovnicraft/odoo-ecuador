@@ -140,7 +140,6 @@ class HrCheckInOut(models.TransientModel):
         AND fecha < datetime("%s", '+%s hours')
         ORDER BY io.CHECKTIME;
         """ % (self.date_start, delta, self.date_end, delta)
-        print SQL
         rows = cur.execute(SQL).fetchall()
         cur.close()
         rows = rows_in + rows
