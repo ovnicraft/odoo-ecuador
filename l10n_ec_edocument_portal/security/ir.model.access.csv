@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_account_invoice,account.invoice,account.model_account_invoice,base.group_portal,1,0,0,0
+access_account_invoice_tax,account.invoice.tax,account.model_account_invoice_tax,base.group_portal,1,0,0,0
+access_account_invoice_line,account.invoice.line,account.model_account_invoice_line,base.group_portal,1,0,0,0
+access_res_partner,res.partner,base.model_res_partner,base.group_portal,1,0,0,0
+access_res_partner_category,res.partner.category,base.model_res_partner_category,base.group_portal,1,0,0,0

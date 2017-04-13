@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home_menu_einvoices" name="Portal layout : einvoices menu entries" inherit_id="website_portal.portal_layout" priority="25">
+        <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+            <li>
+                <a href="/my/einvoices">Facturas</a>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home_edocuments" name="Portal My Home : sales entries" inherit_id="website_portal.portal_my_home" priority="25">
+        <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
+            <h3 class="page-header">
+                <a href="/my/einvoices">Facturas Electronicas
+                    <small class="ml8">
+                        <t t-if="invoice_count">
+                            <span class='badge'><t t-esc="invoice_count"/></span>
+                        </t>
+                        <t t-if="not invoice_count">
+                            No hay facturas en su cuenta.
+                        </t>
+                    </small>
+                </a>
+            </h3>
+        </xpath>
+    </template>
+
+    <template id="portal_my_einvoices" name="My Invoices and Payments">
+      <t t-call="website_portal.portal_layout">
+        <h3 class="page-header">Facturas Electronicas</h3>
+        <t t-if="not invoices">
+            <p>No hay facturas en su cuenta.</p>
+        </t>
+        <t t-if="invoices">
+            <table class="table table-hover o_my_status_table">
+                <thead>
+                    <tr class="active">
+                        <th>XML</th>
+                        <th>Factura #</th>
+                        <th>Fecha de Factura</th>
+                        <th></th>
+                        <th>Monto por Pagar</th>
+                  </tr>
+                </thead>
+                <t t-foreach="invoices" t-as="invoice">
+                    <tr>
+                        <td class="cell_overflow">
+                            <a t-att-href="'/my/einvoices/xml/'+str(invoice.id)" t-att-title="invoice.invoice_number">
+                                <t t-esc=" '%s.xml' % invoice.invoice_number"/>
+                            </a>
+                        </td>
+                        <td class= "cell_overflow">
+                            <a t-att-href="'/my/einvoices/pdf/'+str(invoice.id)" t-att-title="invoice.invoice_number">
+                                <t t-esc=" '%s.pdf' % invoice.invoice_number"/>
+                            </a>
+                        </td>
+                        <td><span t-field="invoice.date_invoice"/></td>
+                        <td>
+                            <t t-if="invoice.state == 'open'">
+                                <span class="label label-info"><i class="fa fa-fw fa-clock-o"/>Pendiente de Pago</span>
+                            </t>
+                            <t t-if="invoice.state == 'paid'">
+                                <span class="label label-default"><i class="fa fa-fw fa-check"/> Pagada</span>
+                            </t>
+                            <t t-if="invoice.state == 'cancel'">
+                                <span class="label label-default"><i class="fa fa-fw fa-remove"/> Anulada</span>
+                            </t>
+                        </td>
+                        <td><span t-field="invoice.residual" t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/></td>
+                    </tr>
+                </t>
+            </table>
+            <div t-if="pager" class="o_portal_pager text-center">
+                <t t-call="website.pager"/>
+            </div>
+        </t>
+      </t>
+    </template>
+
+    <template id="my_einvoices_link" name="Link to frontend portal" inherit_id="website.layout">
+        <xpath expr="//li[@id='o_logout']" position="before">
+            <li><a href="/my/einvoices" role="menuitem">Mis Facturas</a></li>
+        </xpath>
+    </template>
+
+</odoo>
