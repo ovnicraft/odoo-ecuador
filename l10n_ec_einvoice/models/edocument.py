@@ -80,7 +80,7 @@ class Edocument(models.AbstractModel):
             'razonSocial': company.name,
             'nombreComercial': company.name,
             'ruc': company.partner_id.identifier,
-            'claveAcceso':  access_key,
+            'claveAcceso': access_key,
             'codDoc': utils.tipoDocumento[auth.type_id.code],
             'estab': auth.serie_entidad,
             'ptoEmi': auth.serie_emision,
@@ -112,7 +112,7 @@ class Edocument(models.AbstractModel):
         access_key = (
             [fecha, tcomp, ruc],
             [numero, codigo_numero, tipo_emision]
-            )
+        )
         return access_key
 
     @api.multi
@@ -190,7 +190,7 @@ class Edocument(models.AbstractModel):
             {
                 'name': '{0}.xml'.format(self.clave_acceso),
                 'datas': document,
-                'datas_fname':  '{0}.xml'.format(self.clave_acceso),
+                'datas_fname': '{0}.xml'.format(self.clave_acceso),
                 'res_model': self._name,
                 'res_id': self.id,
                 'type': 'binary'

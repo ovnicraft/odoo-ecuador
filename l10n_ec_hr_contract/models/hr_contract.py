@@ -355,13 +355,6 @@ class HrContract(models.Model):
             obj.write(vals)
         return True
 
-#    @api.onchange('job_id')
-#    def onchange_job(self):
-#        _l.debug('hr_contract_state: onchange_job()')
-#        res = False
-#        if self.state != 'draft':
-#            self.job_id = res
-#        return super(hr_contract, self).onchange_job()
 
 class HrContractBonus(models.Model):
     _name = 'hr.contract.bonus'

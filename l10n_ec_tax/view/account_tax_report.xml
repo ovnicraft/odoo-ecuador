@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
+<odoo>
     <data>
         <template id="reporte_account_tax_ec" name="Reporte de Impuestos">
             <t t-call="report.html_container">
@@ -88,4 +88,4 @@
             name="l10n_ec_tax.reporte_account_tax_ec"
             file="l10n_ec_tax.reporte_account_tax_ec"/>
     </data>
-</openerp>
+</odoo>

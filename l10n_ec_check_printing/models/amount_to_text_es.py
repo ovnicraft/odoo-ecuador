@@ -4,8 +4,8 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
-to_19 = ('Cero',  'Uno', 'Dos',  'Tres', 'Cuatro',   'Cinco',   'Seis',
-         'Siete', 'Ocho', 'Nueve', 'Diez',   'Once', 'Doce', 'Trece',
+to_19 = ('Cero', 'Uno', 'Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis',
+         'Siete', 'Ocho', 'Nueve', 'Diez', 'Once', 'Doce', 'Trece',
          'Catorce', 'Quince', 'Dieciseis', 'Diecisiete',
          'Dieciocho', 'Diecinueve')
 
@@ -34,7 +34,7 @@ def _convert_nn(val):
         if dval + 10 > val:
             if val % 10:
                 if val > 20 and val < 30:
-                    return "Veinti"+to_19[val % 10]
+                    return "Veinti" + to_19[val % 10]
                 else:
                     return dcap + ' Y ' + to_19[val % 10]
             return dcap
@@ -54,7 +54,7 @@ def _convert_nnn(val):
         if val == 100:
             word = "Cien"
         else:
-            word = hundreds[rem-1]
+            word = hundreds[rem - 1]
         if mod > 0:
             word = word + ' '
     if mod > 0:

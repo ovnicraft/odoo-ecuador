@@ -129,7 +129,7 @@ class AccountAuthorisation(models.Model):
         string='Activo',
         store=True,
         default=True
-        )
+    )
     in_type = fields.Selection(
         [('interno', 'Internas'),
          ('externo', 'Externas')],
@@ -137,24 +137,24 @@ class AccountAuthorisation(models.Model):
         readonly=True,
         change_default=True,
         default=_get_in_type
-        )
+    )
     type_id = fields.Many2one(
         'account.ats.doc',
         'Tipo de Comprobante',
         required=True
-        )
+    )
     partner_id = fields.Many2one(
         'res.partner',
         'Empresa',
         required=True,
         default=_get_partner
-        )
+    )
     sequence_id = fields.Many2one(
         'ir.sequence',
         'Secuencia',
         help='Secuencia Alfanumerica para el documento, se debe registrar cuando pertenece a la compañia',  # noqa
         ondelete='cascade'
-        )
+    )
 
     _sql_constraints = [
         ('number_unique',
@@ -179,7 +179,7 @@ class ResPartner(models.Model):
         'account.authorisation',
         'partner_id',
         'Autorizaciones'
-        )
+    )
 
     @api.multi
     def get_authorisation(self, type_document):

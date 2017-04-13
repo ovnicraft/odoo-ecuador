@@ -2,11 +2,11 @@
 <templates id="template" xml:space="preserve">
     <t t-name="PosTicket">
         <div class="pos-sale-ticket">
-	    <div>
-		<h4 style="text-align: center;"><t t-esc="widget.pos.company.name"/></h4>
-		<h4 style="text-align: center;">RUC: <t t-esc="widget.pos.company.vat"/></h4>
-	    </div>
-	    Dirección: <t t-esc="widget.pos.company.street || ''"/><br/>
+            <div>
+                <h4 style="text-align: center;"><t t-esc="widget.pos.company.name"/></h4>
+                <h4 style="text-align: center;">RUC: <t t-esc="widget.pos.company.vat"/></h4>
+            </div>
+            Dirección: <t t-esc="widget.pos.company.street || ''"/><br/>
             Telef: <t t-esc="widget.pos.company.phone || ''"/><br />
             Cajero: <t t-esc="widget.pos.cashier ? widget.pos.cashier.name : widget.pos.user.name"/><br />
             <br />
@@ -31,12 +31,12 @@
                     <col width='20%' />
                     <col width='20%' />
                 </colgroup>
-		<tr style="border-bottom: 1px solid black;">
-		    <td><strong>ITEM</strong></td>
-		    <td class="pos-right-align"><strong>CANT</strong></td>
-		    <td class="pos-right-align"><strong>P.UNIT</strong></td>
-		    <td class="pos-right-align"><strong>TOTAL</strong></td>
-		</tr>
+                <tr style="border-bottom: 1px solid black;">
+                    <td><strong>ITEM</strong></td>
+                    <td class="pos-right-align"><strong>CANT</strong></td>
+                    <td class="pos-right-align"><strong>P.UNIT</strong></td>
+                    <td class="pos-right-align"><strong>TOTAL</strong></td>
+                </tr>
                 <tr t-foreach="orderlines" t-as="orderline">
                     <td>
                         <t t-esc="orderline.get_product().display_name"/>

@@ -25,7 +25,7 @@ tpIdCliente = {
     'ruc': '04',
     'cedula': '05',
     'pasaporte': '06'
-    }
+}
 
 
 class AccountAts(dict):

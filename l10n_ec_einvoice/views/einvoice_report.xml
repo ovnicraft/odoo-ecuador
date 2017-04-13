@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<openerp>
+<odoo>
   <data>
 
       <report
@@ -13,9 +13,5 @@
           attachment="('FACTURA_'+(object.invoice_number or '').replace('/','')+'.pdf')"
           />
 
-    <!-- report auto="False" id="account.account_invoices" model="account.invoice"
-            name="account_einvoice" rml="l10n_ec_einvoice/views/report_einvoice.mako"
-            usage="default" string="Factura" header="False" report_type="webkit"/ -->
-
   </data>
-</openerp>
+</odoo>

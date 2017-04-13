@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
+<odoo>
   <data>
 
     <record id="view_employee_ec_filter" model="ir.ui.view">
       <field name="model">hr.employee</field>
       <field name="inherit_id" ref="hr.view_employee_filter"/>
       <field name="arch" type="xml">
-	  <field name="name" position="before">
-	      <field name="identification_id"/>
-	      <field name="firstname"/>
-	      <field name="lastname"/>
-	  </field>
+          <field name="name" position="before">
+              <field name="identification_id"/>
+              <field name="firstname"/>
+              <field name="lastname"/>
+          </field>
       </field>
     </record>
 
@@ -38,7 +38,7 @@
         <field name="model">hr.employee</field>
         <field name="inherit_id" ref="hr.view_employee_form"/>
         <field name="arch" type="xml">
-	    <field name="identification_id" position="replace"/>
+            <field name="identification_id" position="replace"/>
             <xpath expr="//div[@class='oe_title']" position="replace">
                 <div class="oe_title">
                     <h1>
@@ -55,4 +55,4 @@
     <menuitem action="hr.action_hr_job" id="menu_hr_job" parent="hr.menu_human_resources_configuration" sequence="6"/>
 
   </data>
-</openerp>
+</odoo>

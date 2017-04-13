@@ -74,7 +74,7 @@
     <t t-extend="ClientLine">
         <t t-jquery=".client-line" t-operation="replace">
             <tr class='client-line' t-att-data-id='partner.id'>
-	        <td><t t-esc='partner.identifier' /></td>
+                <td><t t-esc='partner.identifier' /></td>
                 <td><t t-esc='partner.name' /></td>
                 <td><t t-esc='partner.address' /></td>
                 <td><t t-esc='partner.phone or partner.mobile or ""' /></td>
@@ -87,7 +87,7 @@
             <table class='client-list'>
                 <thead>
                     <tr>
-	                <th>Cedula / Ruc</th>
+                        <th>Cedula / Ruc</th>
                         <th>Name</th>
                         <th>Address</th>
                         <th>Phone</th>

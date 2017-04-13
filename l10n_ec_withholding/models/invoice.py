@@ -239,7 +239,7 @@ class Invoice(models.Model):
         string="Tiene Retención en IR",
         store=True,
         readonly=True
-        )
+    )
     type = fields.Selection(
         [
             ('out_invoice', 'Customer Invoice'),

@@ -61,12 +61,12 @@ class HrPayslip(models.Model):
             interval_data = []
             holidays = self.env['hr.holidays']
             attendances = {
-                 'name': _("Normal Working Days paid at 100%"),
-                 'sequence': 1,
-                 'code': 'WORK100',
-                 'number_of_days': 0.0,
-                 'number_of_hours': 0.0,
-                 'contract_id': contract.id,
+                'name': _("Normal Working Days paid at 100%"),
+                'sequence': 1,
+                'code': 'WORK100',
+                'number_of_days': 0.0,
+                'number_of_hours': 0.0,
+                'contract_id': contract.id,
             }
             leaves = {}
             day_from = fields.Datetime.from_string(date_from)
@@ -128,6 +128,7 @@ class HrPayslip(models.Model):
         """
         for obj in self:
             df, dt = obj.date_from, obj.date_to
+            self.total = df - dt
 
     @api.multi
     def compute_sheet(self):
@@ -239,7 +240,8 @@ class ResourceCalendar(models.Model):
 
     @api.multi
     def get_working_hours_of_date(self, start_dt=None, end_dt=None,
-                                  leaves=None, compute_leaves=False, resource_id=None,
+                                  leaves=None, compute_leaves=False,
+                                  resource_id=None,
                                   default_interval=None):
         """ Get the working hours of the day based on calendar. This method uses
         get_working_intervals_of_day to have the work intervals of the day. It

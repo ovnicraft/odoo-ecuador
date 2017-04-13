@@ -3,7 +3,7 @@
 
     <template id="assets" name="l10n_ec_pos assets" inherit_id="point_of_sale.assets_backend">
         <xpath expr="." position="inside">
-	    <script type="text/javascript" src="/l10n_ec_pos/static/src/js/pos.js"></script>
+            <script type="text/javascript" src="/l10n_ec_pos/static/src/js/pos.js"></script>
         </xpath>
     </template>
 
@@ -11,10 +11,10 @@
         <field name="model">pos.config</field>
         <field name="inherit_id" ref="point_of_sale.view_pos_config_form"/>
         <field name="arch" type="xml">
-	    <field name="fiscal_position_ids" position="before">
-		<field name="default_partner_id"/>
-	    </field>
-	</field>
+            <field name="fiscal_position_ids" position="before">
+                <field name="default_partner_id"/>
+            </field>
+        </field>
     </record>
 
 </odoo>

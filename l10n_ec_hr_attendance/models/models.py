@@ -122,7 +122,8 @@ class HrCheckInOut(models.TransientModel):
         # TODO: revisar que rango controlar
         cur = self.create_engine()
         SQL_CHECKIN = """
-        SELECT us.SSN, datetime("20"||substr(io.CHECKTIME, 7, 2)||"-"||substr(io.CHECKTIME, 1, 2)||"-"||SUBSTR(io.CHECKTIME, 4, 2)||" "||substr(io.CHECKTIME, 10, 8)) as fecha,
+        SELECT us.SSN,
+        datetime("20"||substr(io.CHECKTIME, 7, 2)||"-"||substr(io.CHECKTIME, 1, 2)||"-"||SUBSTR(io.CHECKTIME, 4, 2)||" "||substr(io.CHECKTIME, 10, 8)) as fecha,
         io.CHECKTYPE, io.SENSORID
         FROM userinfo us INNER JOIN checkinout io ON us.userid = io.userid
         WHERE fecha >= datetime("%s", '-%s hours')
@@ -131,7 +132,8 @@ class HrCheckInOut(models.TransientModel):
         """ % (self.date_start, delta, self.date_start, 0)
         rows_in = cur.execute(SQL_CHECKIN).fetchall()
         SQL = """
-        SELECT us.SSN, datetime("20"||substr(io.CHECKTIME, 7, 2)||"-"||substr(io.CHECKTIME, 1, 2)||"-"||SUBSTR(io.CHECKTIME, 4, 2)||" "||substr(io.CHECKTIME, 10, 8)) as fecha,
+        SELECT us.SSN,
+        datetime("20"||substr(io.CHECKTIME, 7, 2)||"-"||substr(io.CHECKTIME, 1, 2)||"-"||SUBSTR(io.CHECKTIME, 4, 2)||" "||substr(io.CHECKTIME, 10, 8)) as fecha,
         io.CHECKTYPE, io.SENSORID
         FROM userinfo us INNER JOIN checkinout io ON us.userid = io.userid
         WHERE fecha >= datetime("%s", '+%s hours')
@@ -167,8 +169,5 @@ class HrCheckInOut(models.TransientModel):
                     attendance.check_out = self.fix_date(fecha)
                 else:
                     errores.append(new_check.to_cols())
-#                    raise UserError(_('Cannot perform check out on %(ident)s %(empl_name)s, could not find corresponding check in. '  # noqa
-#                                      'Your attendances have probably been modified manually by human resources.') % {'empl_name': employee.name,  # noqa
-#                                                                                                                      'ident': employee.identification_id})  # noqa
         self.write({'state': 'done'})
         return True
