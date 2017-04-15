@@ -14,6 +14,7 @@
         'view/authorisation_view.xml',
         'data/account.ats.doc.csv',
         'data/account.ats.sustento.csv',
+        'data/authorisations.xml',
         'security/ir.model.access.csv'
     ],
     'depends': [

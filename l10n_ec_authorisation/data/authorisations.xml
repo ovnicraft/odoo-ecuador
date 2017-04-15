@@ -1,0 +1,34 @@
+<odoo>
+        <record id="auth_out_invoice" model="account.authorisation">
+            <field name="name">0123456789</field>
+            <field name="serie_entidad">001</field>
+            <field name="serie_emision">002</field>
+            <field name="num_start">200</field>
+            <field name="num_end">500</field>
+            <field name="in_type">interno</field>
+            <field name="active">True</field>
+            <field name="expiration_date" eval="(DateTime.today() + relativedelta(years=1)).strftime('%Y-%m-%d')"/>
+            <field name="type_id" ref="l10n_ec_authorisation.13"/>
+            <field name="partner_id" ref="base.main_partner"/>
+        </record>
+
+        <record id="auth_out_refund" model="account.authorisation">
+            <field name="name">0123456789</field>
+            <field name="serie_entidad">001</field>
+            <field name="serie_emision">002</field>
+            <field name="num_start">200</field>
+            <field name="num_end">500</field>
+            <field name="in_type">interno</field>
+            <field name="active">True</field>
+            <field name="expiration_date" eval="(DateTime.today() + relativedelta(years=1)).strftime('%Y-%m-%d')"/>
+            <field name="type_id" ref="l10n_ec_authorisation.04"/>
+            <field name="partner_id" ref="base.main_partner"/>
+        </record>
+
+        <function model="account.journal" name="write">
+            <function name="search" model="account.journal">
+                <value eval="[('type', '=', 'sale')]"/>
+            </function>
+            <value eval="{'auth_out_invoice_id': ref('auth_out_invoice'), 'auth_out_refund_id': ref('auth_out_refund')}"/>
+        </function>
+</odoo>
