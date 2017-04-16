@@ -56,10 +56,6 @@ class WizardAts(models.TransientModel):
     __logger = logging.getLogger(_name)
 
     @api.multi
-    def _get_period(self):
-        return self.env['account.period'].find()
-
-    @api.multi
     def _get_company(self):
         return self.env.user.company_id.id
 
@@ -166,8 +162,8 @@ class WizardAts(models.TransientModel):
         for r in invoice.refund_ids:
             res.append({
                 'tipoComprobanteReemb': r.doc_id.code,
-                'tpIdProvReemb': tpIdProv[r.partner_id.type_ced_ruc],
-                'idProvReemb': r.partner_id.ced_ruc,
+                'tpIdProvReemb': tpIdProv[r.partner_id.type_identifier],
+                'idProvReemb': r.partner_id.identifier,
                 'establecimientoReemb': r.auth_id.serie_entidad,
                 'puntoEmisionReemb': r.auth_id.serie_emision,
                 'secuencialReemb': r.secuencial,
@@ -196,7 +192,7 @@ class WizardAts(models.TransientModel):
         ]
         compras = []
         for inv in inv_obj.search(dmn_purchase):
-            if not inv.partner_id.type_ced_ruc == 'pasaporte':
+            if not inv.partner_id.type_identifier == 'pasaporte':
                 detallecompras = {}
                 auth = inv.auth_inv_id
                 valRetBien10, valRetServ20, valorRetBienes, valorRetServicios, valRetServ100 = self._get_ret_iva(inv)  # noqa
@@ -210,8 +206,8 @@ class WizardAts(models.TransientModel):
                         t_reeb = inv.amount_untaxed
                 detallecompras.update({
                     'codSustento': inv.sustento_id.code,
-                    'tpIdProv': tpIdProv[inv.partner_id.type_ced_ruc],
-                    'idProv': inv.partner_id.ced_ruc,
+                    'tpIdProv': tpIdProv[inv.partner_id.type_identifier],
+                    'idProv': inv.partner_id.identifier,
                     'tipoComprobante': inv.type == 'liq_purchase' and '03' or auth.type_id.code,  # noqa
                     'parteRel': 'NO',
                     'fechaRegistro': convertir_fecha(inv.date_invoice),
@@ -268,8 +264,8 @@ class WizardAts(models.TransientModel):
         ventas = []
         for inv in self.env['account.invoice'].search(dmn):
             detalleventas = {
-                'tpIdCliente': tpIdCliente[inv.partner_id.type_ced_ruc],
-                'idCliente': inv.partner_id.ced_ruc,
+                'tpIdCliente': tpIdCliente[inv.partner_id.type_identifier],
+                'idCliente': inv.partner_id.identifier,
                 'parteRelVtas': 'NO',
                 'partner': inv.partner_id,
                 'auth': inv.auth_inv_id,
@@ -311,7 +307,7 @@ class WizardAts(models.TransientModel):
                 partner_temp = i['partner']
                 auth_temp = i['auth']
             detalle = {
-                'tpIdCliente': tpIdCliente[partner_temp.type_ced_ruc],
+                'tpIdCliente': tpIdCliente[partner_temp.type_identifier],
                 'idCliente': ruc,
                 'parteRelVtas': 'NO',
                 'tipoComprobante': auth_temp.type_id.code,
@@ -359,7 +355,7 @@ class WizardAts(models.TransientModel):
         ]
         for ret in self.env['account.retention'].search(dmn_ret):
             auth = ret.auth_id
-            aut = auth.is_electronic and inv.numero_autorizacion or auth.name
+            aut = auth.is_electronic and ret.numero_autorizacion or auth.name
             detalleanulados = {
                 'tipoComprobante': auth.type_id.code,
                 'establecimiento': auth.serie_entidad,
@@ -397,7 +393,7 @@ class WizardAts(models.TransientModel):
     def act_export_ats(self):
         ats = AccountAts()
         period = self.period_id
-        ruc = self.company_id.partner_id.ced_ruc
+        ruc = self.company_id.partner_id.identifier
         ats.TipoIDInformante = 'R'
         ats.IdInformante = ruc
         ats.razonSocial = self.company_id.name.upper()
@@ -449,12 +445,20 @@ class WizardAts(models.TransientModel):
             'target': 'new',
         }
 
+    @api.multi
+    def _default_type(self):
+        return self.env.ref('l10n_ec_withholding.fiscal_range_type')
+
     fcname = fields.Char('Nombre de Archivo', size=50, readonly=True)
     fcname_errores = fields.Char('Archivo Errores', size=50, readonly=True)
+    type_id = fields.Many2one(
+        'date.range.type',
+        'Tipo',
+        default=_default_type
+    )
     period_id = fields.Many2one(
-        'account.period',
-        'Periodo',
-        default=_get_period
+        'date.range',
+        'Mes'
     )
     company_id = fields.Many2one(
         'res.company',

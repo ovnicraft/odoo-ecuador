@@ -10,15 +10,17 @@
     'depends': [
         'l10n_ec_authorisation',
         'l10n_ec_tax',
+        'date_range'
     ],
     'author': 'Cristian Salamea <cristian.salamea@ayni.com.ec>',
     'website': 'http://www.ayni.com.ec',
     'data': [
         'security/ir.model.access.csv',
         'data/account.fiscal.position.csv',
-        'data/partner.xml',
+        'data/data.xml',
         'views/report_account_move.xml',
         'views/reports.xml',
-        'views/withholding_view.xml'
+        'views/withholding_view.xml',
+        'wizard/withholding_wizard.xml'
     ]
 }
