@@ -14,8 +14,6 @@
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
-                        <group>
-                        </group>
                         <group states="choose" string="Se exportara la información de la empresa a la que pertenece el usuario actual.">
                             <field name="type_id" invisible="1"/>
                             <field name="period_id" required="1" domain="[('type_id', '=', type_id)]" widget="selection"/>
@@ -28,11 +26,17 @@
                             <field name="fcname" invisible="1"/>
                             <field name="data" filename="fcname"/>
                         </group>
+                        <group string="Errores" states="export_error">
+                            <field name="fcname_errores" invisible="1"/>
+                            <field name="error_data" filename="fcname_errores" readonly="1"/>
+                            <field name="fcname" invisible="1"/>
+                            <field name="data" filename="fcname" readonly="1"/>
+                        </group>
                     </sheet>
                     <footer class="oe_right">
                         <button class="btn-link" special="cancel" states="choose" string="Cancelar"/>
                         <button class="btn-primary" name="act_export_ats" states="choose" string="Exportar XML" type="object"/>
-                        <button class="btn-link" states="export" string="Cerrar" special="cancel"/>
+                        <button class="btn-link" states="export,export_error" string="Cerrar" special="cancel"/>
                     </footer>
                 </form>
             </field>

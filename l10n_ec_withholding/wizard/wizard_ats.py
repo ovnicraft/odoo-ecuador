@@ -70,27 +70,27 @@ class WizardAts(models.TransientModel):
         data_air = []
         temp = {}
         for line in lines:
-            if line.tax_group in ['ret_ir', 'no_ret_ir']:
-                if not temp.get(line.base_code_id.code):
-                    temp[line.base_code_id.code] = {
+            if line.group_id.code in ['ret_ir', 'no_ret_ir']:
+                if not temp.get(line.code):
+                    temp[line.code] = {
                         'baseImpAir': 0,
                         'valRetAir': 0
                     }
-                temp[line.base_code_id.code]['baseImpAir'] += line.base_amount
-                temp[line.base_code_id.code]['codRetAir'] = line.base_code_id.code  # noqa
-                temp[line.base_code_id.code]['porcentajeAir'] = int(line.tax_id.amount)  # noqa
-                temp[line.base_code_id.code]['valRetAir'] += abs(line.amount)
+                temp[line.code]['baseImpAir'] += line.base
+                temp[line.code]['codRetAir'] = line.code  # noqa
+                temp[line.code]['porcentajeAir'] = int(line.tax_id.amount)  # noqa
+                temp[line.code]['valRetAir'] += abs(line.amount)
         for k, v in temp.items():
             data_air.append(v)
         return data_air
 
     @api.model
-    def _get_ventas(self, period_id):
+    def aggregate_ventas(self, range_date):
         sql_ventas = "SELECT type, sum(amount_vat+amount_vat_cero+amount_novat) AS base \
                       FROM account_invoice \
                       WHERE type IN ('out_invoice', 'out_refund') \
                       AND state IN ('open','paid') \
-                      AND period_id = %s" % period_id
+                      AND date_invoice >= '%s' AND date_invoice <= '%s'" % (range_date.date_start, range_date.date_end)
         sql_ventas += " GROUP BY type"
         self.env.cr.execute(sql_ventas)
         res = self.env.cr.fetchall()
@@ -99,6 +99,8 @@ class WizardAts(models.TransientModel):
 
     def _get_ret_iva(self, invoice):
         """
+        TODO: refactor
+
         Return (valRetBien10, valRetServ20,
         valorRetBienes,
         valorRetServicios, valorRetServ100)
@@ -108,19 +110,19 @@ class WizardAts(models.TransientModel):
         retBien = 0
         retServ = 0
         retServ100 = 0
-        for tax in invoice.tax_line:
-            if tax.tax_group == 'ret_vat_b':
-                if tax.percent == '10':
-                    retBien10 += abs(tax.tax_amount)
+        for tax in invoice.tax_line_ids:
+            if tax.group_id.code == 'ret_vat_b':
+                if tax.tax_id.percent_report == '10':
+                    retBien10 += abs(tax.amount)
                 else:
-                    retBien += abs(tax.tax_amount)
-            if tax.tax_group == 'ret_vat_srv':
-                if tax.percent == '100':
-                    retServ100 += abs(tax.tax_amount)
-                elif tax.percent == '20':
-                    retServ20 += abs(tax.tax_amount)
+                    retBien += abs(tax.amount)
+            if tax.group_id.code == 'ret_vat_srv':
+                if tax.tax_id.percent_report == '100':
+                    retServ100 += abs(tax.amount)
+                elif tax.tax_id.percent_report == '20':
+                    retServ20 += abs(tax.amount)
                 else:
-                    retServ += abs(tax.tax_amount)
+                    retServ += abs(tax.amount)
         return retBien10, retServ20, retBien, retServ, retServ100
 
     def get_withholding(self, wh):
@@ -178,20 +180,20 @@ class WizardAts(models.TransientModel):
             })
         return res
 
-    def read_compras(self, period):
+    def aggregate_compras(self, period):
         """
         Procesa:
           * facturas de proveedor
           * liquidaciones de compra
         """
         inv_obj = self.env['account.invoice']
-        dmn_purchase = [
+        dmn = [
             ('state', 'in', ['open', 'paid']),
-            ('period_id', '=', period.id),
             ('type', 'in', ['in_invoice', 'liq_purchase', 'in_refund'])  # noqa
         ]
+        dmn += period.get_domain('date_invoice')
         compras = []
-        for inv in inv_obj.search(dmn_purchase):
+        for inv in inv_obj.search(dmn):
             if not inv.partner_id.type_identifier == 'pasaporte':
                 detallecompras = {}
                 auth = inv.auth_inv_id
@@ -237,7 +239,7 @@ class WizardAts(models.TransientModel):
                         'pagoExtSujRetNorLeg': 'NA'
                     },
                     'formaPago': inv.epayment_id.code,
-                    'detalleAir': self.process_lines(inv.tax_line)
+                    'detalleAir': self.process_lines(inv.tax_line_ids)
                 })
                 if inv.retention_id:
                     detallecompras.update({'retencion': True})
@@ -257,10 +259,10 @@ class WizardAts(models.TransientModel):
     def read_ventas(self, period):
         dmn = [
             ('state', 'in', ['open', 'paid']),
-            ('period_id', '=', period.id),
             ('type', '=', 'out_invoice'),
             ('auth_inv_id.is_electronic', '!=', True)
         ]
+        dmn += period.get_domain('date_invoice')
         ventas = []
         for inv in self.env['account.invoice'].search(dmn):
             detalleventas = {
@@ -328,12 +330,12 @@ class WizardAts(models.TransientModel):
         return ventas_end
 
     @api.multi
-    def read_anulados(self, period):
+    def aggregate_anulados(self, period):
         dmn = [
             ('state', '=', 'cancel'),
-            ('period_id', '=', period.id),
             ('type', 'in', ['out_invoice', 'liq_purchase'])
         ]
+        dmn += period.get_domain('date_invoice')
         anulados = []
         for inv in self.env['account.invoice'].search(dmn):
             auth = inv.auth_inv_id
@@ -350,9 +352,9 @@ class WizardAts(models.TransientModel):
 
         dmn_ret = [
             ('state', '=', 'cancel'),
-            ('period_id', '=', period.id),
             ('in_type', '=', 'ret_in_invoice')
         ]
+        dmn_ret += period.get_domain('date')
         for ret in self.env['account.retention'].search(dmn_ret):
             auth = ret.auth_id
             aut = auth.is_electronic and ret.numero_autorizacion or auth.name
@@ -392,23 +394,25 @@ class WizardAts(models.TransientModel):
     @api.multi
     def act_export_ats(self):
         ats = AccountAts()
-        period = self.period_id
+        range_date = self.period_id
+        ventas_aggregated = self.aggregate_ventas(range_date)
         ruc = self.company_id.partner_id.identifier
         ats.TipoIDInformante = 'R'
         ats.IdInformante = ruc
         ats.razonSocial = self.company_id.name.upper()
-        ats.Anio = get_date_value(period.date_start, '%Y')
-        ats.Mes = get_date_value(period.date_start, '%m')
+        ats.Anio = get_date_value(range_date.date_start, '%Y')
+        ats.Mes = get_date_value(range_date.date_start, '%m')
         ats.numEstabRuc = self.num_estab_ruc.zfill(3)
-        ats.AtstotalVentas = '%.2f' % self._get_ventas(period.id)
-        ats.totalVentas = '%.2f' % self._get_ventas(period.id)
+        ats.AtstotalVentas = '%.2f' % ventas_aggregated
+        ats.totalVentas = '%.2f' % ventas_aggregated
         ats.codigoOperativo = 'IVA'
-        ats.compras = self.read_compras(period)
-        ats.ventas = self.read_ventas(period)
+        ats.compras = self.aggregate_compras(range_date)
+        ats.ventas = self.read_ventas(range_date)
         ats.codEstab = self.num_estab_ruc
-        ats.ventasEstab = '%.2f' % self._get_ventas(period.id)
+        ats.ventasEstab = '%.2f' % ventas_aggregated
+        # TODO
         ats.ivaComp = '0.00'
-        ats.anulados = self.read_anulados(period)
+        ats.anulados = self.aggregate_anulados(range_date)
         ats_rendered = self.render_xml(ats)
         ok, schema = self.validate_document(ats_rendered)
         buf = StringIO.StringIO()
@@ -419,10 +423,11 @@ class WizardAts(models.TransientModel):
         buf_erro.write(schema.error_log)
         out_erro = base64.encodestring(buf_erro.getvalue())
         buf_erro.close()
+        now = fields.Date.from_string(range_date.date_start)
         name = "%s%s%s.XML" % (
             "AT",
-            period.name[:2],
-            period.name[3:8]
+            str(now.month).zfill(2),
+            now.year
         )
         data2save = {
             'state': ok and 'export' or 'export_error',
