@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <record id="acquirer_form_alignet" model="ir.ui.view">
+            <field name="name">acquirer.form.alignet</field>
+            <field name="model">payment.acquirer</field>
+            <field name="inherit_id" ref="payment.acquirer_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='//group[@name="acquirer"]' position='after'>
+                    <group attrs="{'invisible': [('provider', '!=', 'alignet')]}">
+                        <field name="acquirer_ref_id"/>
+                        <field name="idcommerce" required="1"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+</odoo>

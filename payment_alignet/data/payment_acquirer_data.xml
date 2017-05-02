@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="payment_acquirer_alignet" model="payment.acquirer">
+            <field name="name">VISA - MASTERCARD</field>
+            <field name="image" type="base64" file="payment_alignet/static/src/img/alignet_icon.png"/>
+            <field name="provider">alignet</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="view_template_id" ref="alignet_acquirer_button"/>
+            <field name="environment">test</field>
+            <field name="idcommerce">7646</field>
+            <field name="pre_msg"><![CDATA[
+            <p>Seras redireccionado al sitio de pago.</p>]]></field>
+            <field name="post_msg"><![CDATA[
+            <p>Tu pago ha sido <b>AUTORIZADO</b>. Gracias por tu compra.</p>]]></field>
+        </record>
+
+    </data>
+</odoo>

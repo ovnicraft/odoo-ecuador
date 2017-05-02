@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="alignet_acquirer_button">
+            <form t-if="acquirer" t-att-action="tx_url" method="post" target="_self">
+                <input type="hidden" name="IDACQUIRER" t-att-value="acquirerId"/>
+                <input type="hidden" name="IDCOMMERCE" t-att-value="commerceId"/>
+                <!-- auth -->
+                <input type="hidden" name="XMLREQ" t-att-value="XMLREQ"/>
+                <input type="hidden" name="DIGITALSIGN" t-att-value="DIGITALSIGN"/>
+                <input type="hidden" name="SESSIONKEY" t-att-value="SESSIONKEY"/>
+                <!-- Submit-->
+                <button type="submit" width="100px" t-att-class="submit_class">
+                    <img t-if="not submit_txt" src="/payment_alignet/static/src/img/alignet_icon.png"/>
+                    <span t-if="submit_txt"><t t-esc="submit_txt"/> <span class="fa fa-long-arrow-right"/></span>
+                </button>
+            </form>
+        </template>
+
+        <template id="payment_alignet_redirect" name="Payment Alignet">
+            <script type="text/javascript">
+                window.location.href = '<t t-esc="return_url"/>';
+            </script>
+        </template>
+
+    </data>
+</odoo>
