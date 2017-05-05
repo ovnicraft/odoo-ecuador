@@ -48,7 +48,7 @@ class AccountInvoice(models.Model):
             'importeTotal': '{:.2f}'.format(invoice.amount_pay),
             'moneda': 'DOLAR',
             'formaPago': invoice.epayment_id.code,
-            'valorRetIva': '0.00' #('{:.2f}'.format(invoice.taxed_ret_vatsrv + invoice.taxed_ret_vatb)),  # noqa
+            'valorRetIva': '0.00', #('{:.2f}'.format(invoice.taxed_ret_vatsrv + invoice.taxed_ret_vatb)),  # noqa
             'valorRetRenta': '0.00' #'{:.2f}'.format(invoice.amount_tax_ret_ir)
         }
         if company.company_registry:
