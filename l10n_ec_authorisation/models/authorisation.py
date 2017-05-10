@@ -6,10 +6,7 @@ import time
 from datetime import datetime
 
 from odoo import api, fields, models
-from odoo.exceptions import (
-    ValidationError,
-    Warning as UserError
-)
+from odoo.exceptions import ValidationError, UserError, RedirectWarning
 
 
 class AccountAtsDoc(models.Model):
@@ -243,9 +240,15 @@ class AccountInvoice(models.Model):
         El campo auth_inv_id representa la autorizacion para
         emitir el documento.
         """
-        super(AccountInvoice, self)._onchange_partner_id()
-        if self.type in self._DOCUMENTOS_EMISION:
-            self.auth_inv_id = self.journal_id.auth_out_invoice_id.id
+        res = super(AccountInvoice, self)._onchange_partner_id()
+        if not self.partner_id:
+            return res
+        if self.type not in self._DOCUMENTOS_EMISION:
+            auth = self.partner_id.get_authorisation(self.type)
+            if not auth:
+                action = self.env.ref('l10n_ec_authorisation.action_account_authoriz_out_form')
+                raise RedirectWarning('No ha configurado una autorización en el Partner', action, 'Configurar')
+            self.auth_inv_id = auth.id
 
     @api.one
     @api.depends(
@@ -306,7 +309,8 @@ class AccountInvoice(models.Model):
         # TODO: agregar validacion numerica a reference
         if self.reference:
             self.reference = self.reference.zfill(9)
-            if not self.auth_inv_id.is_valid_number(int(self.reference)):
+            auth = self.auth_inv_id
+            if not auth.is_electronic and not auth.is_valid_number(int(self.reference)):
                 return {
                     'value': {
                         'reference': ''
