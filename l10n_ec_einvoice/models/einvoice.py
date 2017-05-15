@@ -101,7 +101,8 @@ class AccountInvoice(models.Model):
                 [u'%', ' '],
                 [u'º', ' '],
                 [u'Ñ', 'N'],
-                [u'ñ', 'n']
+                [u'ñ', 'n'],
+                [u'\n', ' ']
             ]
             for f, r in special:
                 code = code.replace(f, r)
@@ -116,7 +117,7 @@ class AccountInvoice(models.Model):
             discount = (line.price_unit - priced) * line.quantity
             detalle = {
                 'codigoPrincipal': codigoPrincipal,
-                'descripcion': fix_chars(line.name.strip().replace("\n", " ")),
+                'descripcion': fix_chars(line.name.strip()),
                 'cantidad': '%.6f' % (line.quantity),
                 'precioUnitario': '%.6f' % (line.price_unit),
                 'descuento': '%.2f' % discount,
