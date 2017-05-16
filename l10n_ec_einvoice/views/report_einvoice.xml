@@ -179,6 +179,30 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-xs-7" style="background-color: silver; text-align: center; margin-bottom: 10px;">
+                                    <div class="col-xs-5" style="padding-left: 0px;">
+                                        <span><strong>Forma de Pago</strong></span>
+                                    </div>
+                                    <div class="col-xs-3" style="padding-left: 0px;">
+                                        <span><strong>Valor</strong></span>
+                                    </div>
+                                    <div class="col-xs-3" style="padding-left: 0px;">
+                                        <span><strong>Plazo</strong></span>
+                                    </div>
+                                </div>
+                                <div class="col-xs-7" style="margin-bottom: 10px; border-bottom: 1px solid darkgray;">
+                                    <div class="col-xs-5" style="padding-left: 0px; text-align: center;">
+                                        <span t-esc="o.epayment_id.name"/>
+                                    </div>
+                                    <div class="col-xs-3" style="padding-left: 0px; text-align: center;">
+                                        <span t-esc="o.amount_pay"/>
+                                    </div>
+                                    <div class="col-xs-3" style="padding-left: 0px; text-align: center;">
+                                        <span t-esc="o.date_due"/>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </t>
                 </t>

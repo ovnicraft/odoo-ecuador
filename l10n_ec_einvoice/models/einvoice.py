@@ -101,7 +101,8 @@ class AccountInvoice(models.Model):
                 [u'%', ' '],
                 [u'º', ' '],
                 [u'Ñ', 'N'],
-                [u'ñ', 'n']
+                [u'ñ', 'n'],
+                [u'\n', ' ']
             ]
             for f, r in special:
                 code = code.replace(f, r)
