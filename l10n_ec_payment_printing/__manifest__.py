@@ -13,7 +13,6 @@
     'author': 'Cristian Novillo <cristian.novillo@ayni.com.ec>',
     'website': 'http://www.ayni.com.ec',
     'data': [
-        'views/payment_printing_view.xml',
         'views/report_payment.xml',
         'views/reports.xml'
     ]

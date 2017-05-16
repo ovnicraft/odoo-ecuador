@@ -52,7 +52,10 @@
                             <div class="row" style="text-align: center; font-size: 9px;">
                                 <div class="col-xs-4">
                                     <hr> </hr>
-                                    <span><strong>REALIZADO POR:<t t-esc="o.user_id.name"></t></strong></span>
+                                    <span><strong>REALIZADO POR:</strong></span>
+                                </div>
+                                 <div class="col-xs-4">
+                                    
                                 </div>
                                 <div class="col-xs-4">
                                     <hr> </hr>
