@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="reporte_payment" name="Reporte Comprobante de Pago/Cobro">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="report.external_layout">
+                        <div class="page">
+                            <h2><strong>Comprobante Nro. : </strong><t t-esc="o.name"></t></h2>
+                            <table class="table" style="font-size: 8pt">
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Fecha:</strong></td>
+                                        <td><t t-esc="o.payment_date"></t></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Empresa:</strong></td>
+                                        <td><t t-esc="o.partner_id.name"></t></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Diario:</strong></td>
+                                        <td><t t-esc="o.journal_id.name"></t></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p style="text-align: center;"><strong>Detalle Transacción</strong></p>
+                            <p style="text-align: center;"></p>
+                            <p style="text-align: center;"></p>
+                            <p style="text-align: center;"></p>
+                            <table  class="table table-condensed" style="font-size: 8pt">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center; width: 131.033px;">CODIGO</th>
+                                        <th style="text-align: center; width: 799.25px;">DETALLE</th>
+                                        <th style="text-align: center; width: 168.717px;">VALOR</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="sale_tbody">
+                                    <tr>
+                                        <td style="text-align: center; width: 131.033px;"><t t-esc="o.name"></t></td>
+                                        <td style="text-align: center; width: 799.25px; padding-left: 40px;">
+                                                <t t-esc="o.communication"></t>
+                                        </td>
+                                        <td style="text-align: center; width: 168.717px;">
+                                            <span t-esc="o.amount" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}">
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br/><br/><br/>
+                            <div class="row" style="text-align: center; font-size: 9px;">
+                                <div class="col-xs-4">
+                                    <hr> </hr>
+                                    <span><strong>REALIZADO POR:<t t-esc="o.user_id.name"></t></strong></span>
+                                </div>
+                                <div class="col-xs-4">
+                                    <hr> </hr>
+                                    <span><strong><t t-esc="o.partner_id.name"></t></strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
