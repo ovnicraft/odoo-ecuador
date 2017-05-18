@@ -60,11 +60,12 @@ class AccountAuthorisation(models.Model):
         """
         Check the due_date to give the value active field
         """
-        if not self.expiration_date:
-            return
-        now = datetime.strptime(time.strftime("%Y-%m-%d"), '%Y-%m-%d')
-        due_date = datetime.strptime(self.expiration_date, '%Y-%m-%d')
-        self.active = now < due_date
+        if self.is_electronic:
+            self.active = True
+        else:
+            now = datetime.strptime(time.strftime("%Y-%m-%d"), '%Y-%m-%d')
+            due_date = datetime.strptime(self.expiration_date, '%Y-%m-%d')
+            self.active = now < due_date
 
     def _get_type(self):
         return self._context.get('type', 'in_invoice')  # pylint: disable=E1101
