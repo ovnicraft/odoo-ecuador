@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+            id="account_payment_report"
+            string="Comprobante Pago/Cobro"
+            model="account.payment"
+            report_type="qweb-pdf"
+            name="l10n_ec_payment_printing.reporte_payment"
+            file="l10n_ec_payment_printing.reporte_payment"/>
+    </data>
+</odoo>
