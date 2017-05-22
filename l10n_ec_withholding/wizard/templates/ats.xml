@@ -54,24 +54,28 @@
             <autModificado>{{ dc.autModificado }}</autModificado>
             {% endif %}
             {% if dc.detalleAir %}
-            <air>
-                {% for air in dc.detalleAir %}
-                <detalleAir>
-                    <codRetAir>{{ air.codRetAir }}</codRetAir>
-                    <baseImpAir>{{ '%.2f' % air.baseImpAir }}</baseImpAir>
-                    <porcentajeAir>{{ air.porcentajeAir }}</porcentajeAir>
-                    <valRetAir>{{ '%.2f' % air.valRetAir }}</valRetAir>
-                </detalleAir>
-                {% endfor %}
-            </air>
+                {% if not dc.es_nc %}
+                    <air>
+                        {% for air in dc.detalleAir %}
+                        <detalleAir>
+                            <codRetAir>{{ air.codRetAir }}</codRetAir>
+                            <baseImpAir>{{ '%.2f' % air.baseImpAir }}</baseImpAir>
+                            <porcentajeAir>{{ air.porcentajeAir }}</porcentajeAir>
+                            <valRetAir>{{ '%.2f' % air.valRetAir }}</valRetAir>
+                        </detalleAir>
+                        {% endfor %}
+                    </air>
+                {% endif %}
             {% endif %}
-            {% if rentencion %}
-            <estabRetencion1>{{ estabRetencion1 }}</estabRetencion1>
-            <ptoEmiRetencion1>{{ ptoEmiRetencion1 }}</ptoEmiRetencion1>
-            <secRetencion1>{{ secRetencion1 }}</secRetencion1>
-            <autRetencion1>{{ autRetencion1 }}</autRetencion1>
-            <fechaEmiRet1>{{ fechaEmiRet1 }}</fechaEmiRet1>
+
+            {% if dc.retencion %}
+            <estabRetencion1>{{ dc.estabRetencion1 }}</estabRetencion1>
+            <ptoEmiRetencion1>{{ dc.ptoEmiRetencion1 }}</ptoEmiRetencion1>
+            <secRetencion1>{{ dc.secRetencion1 }}</secRetencion1>
+            <autRetencion1>{{ dc.autRetencion1 }}</autRetencion1>
+            <fechaEmiRet1>{{ dc.fechaEmiRet1 }}</fechaEmiRet1>
             {% endif %}
+
             {% if dc.reembolsos %}
             <reembolsos>
                 {% for r in dc.reembolsos %}
@@ -116,9 +120,11 @@
             <montoIce>{{ dv.montoIce }}</montoIce>
             <valorRetIva>{{ dv.valorRetIva }}</valorRetIva>
             <valorRetRenta>{{ dv.valorRetRenta }}</valorRetRenta>
+            {% if dv.formasDePago %}
             <formasDePago>
                 <formaPago>{{ dv.formasDePago.formaPago }}</formaPago>
             </formasDePago>
+            {% endif %}
         </detalleVentas>
         {% endfor %}
     </ventas>
