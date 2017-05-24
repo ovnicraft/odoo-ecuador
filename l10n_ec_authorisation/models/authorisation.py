@@ -165,6 +165,8 @@ class AccountAuthorisation(models.Model):
         Metodo que verifica si @number esta en el rango
         de [@num_start,@num_end]
         """
+        if self.is_electronic and self.num_start <= number:
+            return True 
         if self.num_start <= number <= self.num_end:
             return True
         return False
