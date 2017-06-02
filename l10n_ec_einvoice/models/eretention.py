@@ -7,7 +7,7 @@ import itertools
 
 from jinja2 import Environment, FileSystemLoader
 
-from openerp import models, api
+from openerp import fields, models, api
 from openerp.exceptions import Warning as UserError
 
 from . import utils
@@ -30,14 +30,19 @@ class AccountWithdrawing(models.Model):
         # generar infoTributaria
         company = withdrawing.company_id
         partner = withdrawing.invoice_id.partner_id
+        now = fields.Date.from_string(withdrawing.date)
+        periodo = "%s/%s" % (
+            str(now.month).zfill(2),
+            now.year
+        )
         infoCompRetencion = {
             'fechaEmision': time.strftime('%d/%m/%Y', time.strptime(withdrawing.date, '%Y-%m-%d')),  # noqa
             'dirEstablecimiento': company.street,
             'obligadoContabilidad': 'SI',
-            'tipoIdentificacionSujetoRetenido': utils.tipoIdentificacion[partner.type_ced_ruc],  # noqa
+            'tipoIdentificacionSujetoRetenido': utils.tipoIdentificacion[partner.type_identifier],  # noqa
             'razonSocialSujetoRetenido': partner.name,
-            'identificacionSujetoRetenido': partner.ced_ruc,
-            'periodoFiscal': withdrawing.period_id.name,
+            'identificacionSujetoRetenido': partner.identifier,
+            'periodoFiscal': periodo,
             }
         if company.company_registry:
             infoCompRetencion.update({'contribuyenteEspecial': company.company_registry})  # noqa
@@ -47,22 +52,22 @@ class AccountWithdrawing(models.Model):
         """
         """
         def get_codigo_retencion(linea):
-            if linea.tax_group in ['ret_vat_b', 'ret_vat_srv']:
-                return utils.tabla21[line.percent]
+            if linea.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv']:
+                return utils.tabla21[line.tax_id.percent_report]
             else:
-                code = linea.base_code_id and linea.base_code_id.code or linea.tax_code_id.code  # noqa
+                code = linea.tax_id.code_tax  # noqa
                 return code
 
         impuestos = []
         for line in retention.tax_ids:
             impuesto = {
-                'codigo': utils.tabla20[line.tax_group],
+                'codigo': utils.tabla20[line.tax_id.tax_group_id.code],
                 'codigoRetencion': get_codigo_retencion(line),
                 'baseImponible': '%.2f' % (line.base),
-                'porcentajeRetener': str(line.percent),
+                'porcentajeRetener': str(line.tax_id.percent_report),
                 'valorRetenido': '%.2f' % (abs(line.amount)),
                 'codDocSustento': retention.invoice_id.sustento_id.code,
-                'numDocSustento': line.num_document,
+                'numDocSustento': retention.invoice_id.invoice_number,
                 'fechaEmisionDocSustento': time.strftime('%d/%m/%Y', time.strptime(retention.invoice_id.date_invoice, '%Y-%m-%d'))  # noqa
             }
             impuestos.append(impuesto)
@@ -137,7 +142,7 @@ class AccountWithdrawing(models.Model):
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
-    @api.multi
+    @api.one
     def action_generate_eretention(self):
         for obj in self:
             if not obj.journal_id.auth_ret_id.is_electronic:
@@ -150,3 +155,12 @@ class AccountInvoice(models.Model):
         for obj in self:
             if obj.type in ['in_invoice', 'liq_purchase']:
                 self.action_generate_eretention()
+
+class AccountTax(models.Model):
+    _inherit = 'account.tax'
+
+    code_tax = fields.Char(
+        'Código de Impuesto',
+        size=64,
+        readonly=False,
+    )

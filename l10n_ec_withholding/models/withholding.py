@@ -207,8 +207,8 @@ class AccountWithdrawing(models.Model):
     @api.constrains('name')
     def _onchange_name(self):
         length = {
-            'in_invoice': 9,
-            'liq_purchase': 9,
+            'in_invoice': 15,
+            'liq_purchase': 15,
             'out_invoice': 15
         }
         if not self.name or not self.type:
