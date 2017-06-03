@@ -104,7 +104,7 @@ class AccountWithdrawing(models.Model):
         """
         """
         for obj in self:
-            self.check_date(obj.date)
+            #self.check_date(obj.date)
             self.check_before_sent()
             access_key, emission_code = self._get_codes('account.retention')
             ewithdrawing = self.render_document(obj, access_key, emission_code)
@@ -129,6 +129,7 @@ class AccountWithdrawing(models.Model):
                 attachments=[a.id for a in attach],
                 tmpl='l10n_ec_einvoice.email_template_eretention'
             )
+
             return True
 
     @api.multi

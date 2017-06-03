@@ -329,8 +329,8 @@ class AccountWithdrawing(models.Model):
         for ret in self:
             if ret.move_ret_id:
                 raise UserError(utils.CODE703)
-            elif ret.auth_id.is_electronic:
-                raise UserError(u'No puede anular un documento electrónico.')
+            #elif ret.auth_id.is_electronic:
+            #    raise UserError(u'No puede anular un documento electrónico.')
             data = {'state': 'cancel'}
             if ret.to_cancel:
                 # FIXME
