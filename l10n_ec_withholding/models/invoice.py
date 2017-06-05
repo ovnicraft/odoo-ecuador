@@ -342,12 +342,14 @@ class Invoice(models.Model):
                 raise UserError(u'El número de retención es incorrecto.')
                 # TODO: read next number
 
-            if inv.create_retention_type == 'auto':
+            if inv.create_retention_type == 'auto' and inv.type in ['in_invoice', 'liq_purchase']:
                 sequence = inv.journal_id.auth_retention_id.sequence_id
                 wd_number = self.env['ir.sequence'].get(sequence.code)
                 number = '{0}{1}{2}'.format(inv.journal_id.auth_retention_id.serie_entidad,
                                         inv.journal_id.auth_retention_id.serie_emision,
                                         wd_number.zfill(9))
+            else:
+                number = wd_number
 
             ret_taxes = inv.tax_line_ids.filtered(lambda l: l.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv', 'ret_ir'])  # noqa
 
@@ -369,6 +371,7 @@ class Invoice(models.Model):
                 'date': inv.date_invoice,
                 'manual': False
             }
+            print withdrawing_data
             withdrawing = self.env['account.retention'].create(withdrawing_data)  # noqa
             ret_taxes.write({'retention_id': withdrawing.id, 'num_document': inv.reference})  # noqa
 
