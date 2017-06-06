@@ -60,10 +60,14 @@ class AccountWithdrawing(models.Model):
 
         impuestos = []
         for line in retention.tax_ids:
+            if line.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv']:
+                base = retention.invoice_id.amount_tax
+            else:
+                base = line.base
             impuesto = {
                 'codigo': utils.tabla20[line.tax_id.tax_group_id.code],
                 'codigoRetencion': get_codigo_retencion(line),
-                'baseImponible': '%.2f' % (line.base),
+                'baseImponible': '%.2f' % (base),
                 'porcentajeRetener': str(line.tax_id.percent_report),
                 'valorRetenido': '%.2f' % (abs(line.amount)),
                 'codDocSustento': retention.invoice_id.sustento_id.code,
