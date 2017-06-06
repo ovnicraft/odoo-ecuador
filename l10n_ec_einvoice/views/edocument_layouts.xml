@@ -30,6 +30,17 @@
           attachment="('FACTURA_'+(object.invoice_number or '').replace('/','')+'.pdf')"
           />
 
+    <report
+          id="account.account_retention"
+          model="account.retention"
+          string="Retencion Electronica"
+          report_type="qweb-pdf"
+          name="l10n_ec_einvoice.report_eretention"
+          file="l10n_ec_einvoice.report_eretention"
+          attachment_use="True"
+          attachment="('RETENCION_'+(object.name or '').replace('/','')+'.pdf')"
+          />
+
     <record id="account.account_invoices" model="ir.actions.report.xml">
         <field name="paperformat_id" ref="report_edocs_paperformat"/>
     </record>
