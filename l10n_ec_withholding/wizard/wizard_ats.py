@@ -78,7 +78,7 @@ class WizardAts(models.TransientModel):
                     }
                 temp[line.code]['baseImpAir'] += line.base
                 temp[line.code]['codRetAir'] = line.code  # noqa
-                temp[line.code]['porcentajeAir'] = int(line.tax_id.amount)  # noqa
+                temp[line.code]['porcentajeAir'] = abs(int(line.tax_id.amount))  # noqa
                 temp[line.code]['valRetAir'] += abs(line.amount)
         for k, v in temp.items():
             data_air.append(v)
@@ -201,7 +201,7 @@ class WizardAts(models.TransientModel):
                 if inv.type == 'liq_purchase':
                     ref = inv.auth_inv_id.name
                 else:
-                    ref = inv.reference
+                    ref = inv.auth_number
                 ret = ''
                 t_reeb = 0.0
                 if not inv.auth_inv_id.type_id.code == '41':
@@ -216,9 +216,9 @@ class WizardAts(models.TransientModel):
                     'tipoComprobante': inv.type == 'liq_purchase' and '03' or auth.type_id.code,  # noqa
                     'parteRel': 'NO',
                     'fechaRegistro': convertir_fecha(inv.date_invoice),
-                    'establecimiento': inv.invoice_number[:3],
-                    'puntoEmision': inv.invoice_number[3:6],
-                    'secuencial': inv.invoice_number[6:15],
+                    'establecimiento': inv.auth_inv_id.serie_entidad,
+                    'puntoEmision': inv.auth_inv_id.serie_emision,
+                    'secuencial': inv.reference,
                     'fechaEmision': convertir_fecha(inv.date_invoice),
                     'autorizacion': ref,
                     'baseNoGraIva': '%.2f' % inv.amount_novat,
