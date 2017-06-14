@@ -22,13 +22,9 @@
                             <field name="num_estab_ruc"/>
                             <field name="pay_limit" readonly="1"/>
                         </group>
-                        <group states="export" string="Archivo generado correctamente, guardelo en su ubicación de preferencia.">
-                            <field name="fcname" invisible="1"/>
-                            <field name="data" filename="fcname"/>
-                        </group>
-                        <group string="Errores" states="export_error">
+                        <group string="Anexo Transaccional Simplificado">
                             <field name="fcname_errores" invisible="1"/>
-                            <field name="error_data" filename="fcname_errores" readonly="1"/>
+                            <field name="error_data" filename="fcname_errores" readonly="1" attrs="{'invisible': [('state','not in',['export_error'])]}"/>
                             <field name="fcname" invisible="1"/>
                             <field name="data" filename="fcname" readonly="1"/>
                         </group>
