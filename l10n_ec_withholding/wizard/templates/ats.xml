@@ -110,6 +110,10 @@
             <tpIdCliente>{{ dv.tpIdCliente }}</tpIdCliente>
             <idCliente>{{ dv.idCliente }}</idCliente>
             <parteRelVtas>{{ dv.parteRelVtas }}</parteRelVtas>
+            {% if dv.tpIdCliente == '06' %}
+                <tipoCliente>{{ dv.tipoCliente }}</tipoCliente>
+                <denoCli>{{ dv.denoCli }}</denoCli>
+            {% endif %}
             <tipoComprobante>{{ dv.tipoComprobante }}</tipoComprobante>
             <tipoEmision>{{ dv.tipoEmision }}</tipoEmision>
             <numeroComprobantes>{{ dv.numeroComprobantes }}</numeroComprobantes>

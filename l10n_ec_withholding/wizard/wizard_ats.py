@@ -27,6 +27,11 @@ tpIdCliente = {
     'pasaporte': '06'
 }
 
+tpEntidad = {
+    '9': '02',
+    '6': '01',
+    '0': '00'
+}
 
 class AccountAts(dict):
     """
@@ -269,6 +274,8 @@ class WizardAts(models.TransientModel):
         for inv in self.env['account.invoice'].search(dmn):
             detalleventas = {
                 'tpIdCliente': tpIdCliente[inv.partner_id.type_identifier],
+                'tipoCliente': tpEntidad[inv.partner_id.tipo_persona],
+                'denoCli': inv.partner_id.name,
                 'idCliente': inv.partner_id.identifier,
                 'parteRelVtas': 'NO',
                 'partner': inv.partner_id,
@@ -310,8 +317,11 @@ class WizardAts(models.TransientModel):
                 numComp += 1
                 partner_temp = i['partner']
                 auth_temp = i['auth']
+            partner_temp.name
             detalle = {
                 'tpIdCliente': tpIdCliente[partner_temp.type_identifier],
+                'tipoCliente': tpEntidad[partner_temp.tipo_persona],
+                'denoCli': partner_temp.name,
                 'idCliente': ruc,
                 'parteRelVtas': 'NO',
                 'tipoComprobante': auth_temp.type_id.code,
