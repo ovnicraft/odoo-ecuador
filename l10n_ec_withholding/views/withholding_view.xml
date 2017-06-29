@@ -52,6 +52,12 @@
                     <button name="print_retention" string="Retención" type="object" states="open,paid" class="btn btn-primary" icon="fa-print"/>
                     <button name="print_move" string="Comprobante" type="object" states="open,paid" class="btn btn-primary" icon="fa-print"/>
                 </xpath>
+                <xpath expr="//field[@name='retention_id']" position="before">
+                    <div>
+                        <button name="button_delete_retention" string="Desvincular Ret." type="object" class="oe_link oe_inline" states="cancel"/>
+                    </div>
+                    <newline/>
+                </xpath>
             </field>
         </record>
 

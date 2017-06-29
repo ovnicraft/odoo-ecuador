@@ -399,6 +399,16 @@ class Invoice(models.Model):
         new_invoices._onchange_journal_id()
         return new_invoices
 
+    @api.multi
+    def button_delete_retention(self):
+        """
+            boton para desvincular retenciones  de factura proveedor
+        """
+        if self.retention_id.state == 'cancel':
+            self.write({'retention_id': False})
+        else:
+            raise UserError('La retencion debe estar en estado ANULADO')
+        return True
 
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
