@@ -124,11 +124,10 @@
         <field name="arch" type="xml">
           <xpath expr="//button[@name='action_cancel']" position="after">
               <button name="action_generate_document" string="Generar Ret. Electrónica" type="object" class="oe_highlight" attrs="{'invisible':['|',('autorizado_sri','=',True),('state','!=','done')]}"/>
+              <button name="action_send_eretention" type="object" attrs="{'invisible':['|',('autorizado_sri','=',False),('state','!=','done')]}" string="Enviar Ret. Electrónica" class="oe_highlight"/>
           </xpath>
           <xpath expr="//field[@name='name']" position="after">
               <button name="retention_print" string="Imprimir" type="object" icon="fa-print" class="oe_inline oe_stat_button oe_right" states="done" attrs="{'invisible': [('in_type','=','ret_out_invoice')]}"/>
-              <button name="action_send_eretention" type="object" attrs="{'invisible':['|',('autorizado_sri','=',False),('state','!=','done')]}"
-                        string="Enviar Ret. Electrónica" class="oe_highlight"/>
           </xpath>
 
             <xpath expr="//field[@name='move_id']" position="after">
