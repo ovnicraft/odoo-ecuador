@@ -345,6 +345,9 @@ class AccountWithdrawing(models.Model):
 
     @api.multi
     def action_draft(self):
+        if self.auth_id.is_electronic and self.invoice_id.type == 'in_invoice':
+            if not self.autorizado_sri:
+                self.auth_id.sequence_id.number_next_actual = self.auth_id.sequence_id.number_next_actual - 1
         self.write({'state': 'draft'})
         return True
 
