@@ -324,7 +324,7 @@ class Invoice(models.Model):
         TYPES_TO_VALIDATE = ['in_invoice', 'liq_purchase']
         wd_number = False
         for inv in self:
-            if not self.has_retention:
+            if not self.has_retention and self.retention_id:
                 continue
 
             # Autorizacion para Retenciones de la Empresa

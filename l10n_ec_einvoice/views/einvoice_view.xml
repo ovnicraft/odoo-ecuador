@@ -70,6 +70,17 @@
             </xpath>
         </field>
     </record>
+    
+    <record id="view_account_invoice_tree22" model="ir.ui.view">
+      <field name="name">view.account.invoice.tree22</field>
+      <field name="model">account.invoice</field>
+      <field name="inherit_id" ref="account.invoice_tree"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='state']" position="before">
+          <field name="autorizado_sri"/>
+        </xpath>
+      </field>
+    </record>
 
     <record id="view_account_einvoice_form" model="ir.ui.view">
         <field name="name">account.einvoice.form</field>
@@ -80,6 +91,8 @@
             <xpath expr="//button[@name='action_invoice_sent']" position="replace">
                 <button name="action_generate_einvoice" type="object" attrs="{'invisible':['|',('autorizado_sri','=',True),('state','!=','open')]}"
                         string="Generar Doc. Electrónica" class="oe_highlight"/>
+                <button name="action_send_einvoice" type="object" attrs="{'invisible':['|',('autorizado_sri','=',False),('state','!=','open')]}"
+                        string="Enviar Doc. Electrónica" class="oe_highlight"/>
             </xpath>
             <xpath expr="//field[@name='date_due']" position="after">
                 <field name="clave_acceso"/>
@@ -114,6 +127,8 @@
           </xpath>
           <xpath expr="//field[@name='name']" position="after">
               <button name="retention_print" string="Imprimir" type="object" icon="fa-print" class="oe_inline oe_stat_button oe_right" states="done" attrs="{'invisible': [('in_type','=','ret_out_invoice')]}"/>
+              <button name="action_send_eretention" type="object" attrs="{'invisible':['|',('autorizado_sri','=',False),('state','!=','done')]}"
+                        string="Enviar Ret. Electrónica" class="oe_highlight"/>
           </xpath>
 
             <xpath expr="//field[@name='move_id']" position="after">

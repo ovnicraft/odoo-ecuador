@@ -129,11 +129,6 @@ class AccountWithdrawing(models.Model):
             auth_document = self.render_authorized_document(auth)
             self.update_document(auth, [access_key, emission_code])
             attach = self.add_attachment(auth_document, auth)
-            self.send_document(
-                attachments=[a.id for a in attach],
-                tmpl='l10n_ec_einvoice.email_template_eretention'
-            )
-
             return True
 
     @api.multi
@@ -142,6 +137,23 @@ class AccountWithdrawing(models.Model):
             self,
             'l10n_ec_einvoice.report_eretention'
         )
+
+    @api.multi
+    def action_send_eretention(self):
+        '''
+        This function send electronic retention generated
+        '''
+        if self.partner_id.email:
+            attach = self.env['ir.attachment']
+            attachment_ids = attach.search([('res_model', '=', 'account.retention'),('res_id','=',self.id)])
+            if attachment_ids:
+                self.attachment_count = len(attachment_ids)
+            self.send_document(
+                attachments=[a.id for a in attachment_ids],
+                tmpl='l10n_ec_einvoice.email_template_eretention'
+            )
+        else:
+            raise UserError('Ingresar correo electrónico del proveedor')
 
 
 class AccountInvoice(models.Model):
