@@ -165,6 +165,8 @@ class AccountAuthorisation(models.Model):
         Metodo que verifica si @number esta en el rango
         de [@num_start,@num_end]
         """
+        if self.is_electronic and self.num_start <= number:
+            return True 
         if self.num_start <= number <= self.num_end:
             return True
         return False
@@ -309,6 +311,10 @@ class AccountInvoice(models.Model):
     def _onchange_ref(self):
         # TODO: agregar validacion numerica a reference
         if self.reference:
+            if len(self.reference) > 9:
+                raise UserError(
+                    u'Debe ingresar máximo 9 dígitos.'
+                )
             self.reference = self.reference.zfill(9)
             auth = self.auth_inv_id
             if not auth.is_electronic and not auth.is_valid_number(int(self.reference)):

@@ -207,8 +207,8 @@ class AccountWithdrawing(models.Model):
     @api.constrains('name')
     def _onchange_name(self):
         length = {
-            'in_invoice': 9,
-            'liq_purchase': 9,
+            'in_invoice': 15,
+            'liq_purchase': 15,
             'out_invoice': 15
         }
         if not self.name or not self.type:
@@ -329,8 +329,8 @@ class AccountWithdrawing(models.Model):
         for ret in self:
             if ret.move_ret_id:
                 raise UserError(utils.CODE703)
-            elif ret.auth_id.is_electronic:
-                raise UserError(u'No puede anular un documento electrónico.')
+            #elif ret.auth_id.is_electronic:
+            #    raise UserError(u'No puede anular un documento electrónico.')
             data = {'state': 'cancel'}
             if ret.to_cancel:
                 # FIXME
@@ -345,6 +345,9 @@ class AccountWithdrawing(models.Model):
 
     @api.multi
     def action_draft(self):
+        if self.auth_id.is_electronic and self.invoice_id.type == 'in_invoice':
+            if not self.autorizado_sri:
+                self.auth_id.sequence_id.number_next_actual = self.auth_id.sequence_id.number_next_actual - 1
         self.write({'state': 'draft'})
         return True
 

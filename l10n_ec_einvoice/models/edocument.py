@@ -102,13 +102,13 @@ class Edocument(models.AbstractModel):
             auth = self.company_id.partner_id.get_authorisation('ret_in_invoice')  # noqa
             ld = self.date.split('-')
             numero = getattr(self, 'name')
-            numero = numero[6:15]
         ld.reverse()
         fecha = ''.join(ld)
         tcomp = utils.tipoDocumento[auth.type_id.code]
         ruc = self.company_id.partner_id.identifier
         codigo_numero = self.get_code()
         tipo_emision = self.company_id.emission_code
+        print fecha, tcomp, ruc, numero, codigo_numero, tipo_emision
         access_key = (
             [fecha, tcomp, ruc],
             [numero, codigo_numero, tipo_emision]

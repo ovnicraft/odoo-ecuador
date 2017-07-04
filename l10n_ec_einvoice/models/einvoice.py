@@ -215,10 +215,23 @@ class AccountInvoice(models.Model):
                 self.ambiente
             )
             self.message_post(body=message)
+
+    @api.multi
+    def action_send_einvoice(self):
+        '''
+        This function send electronic invoice generated
+        '''
+        if self.partner_id.email:
+            attach = self.env['ir.attachment']
+            attachment_ids = attach.search([('res_model', '=', 'account.invoice'),('res_id','=',self.id)])
+            if attachment_ids:
+                self.attachment_count = len(attachment_ids)
             self.send_document(
-                attachments=[a.id for a in attach],
+                attachments=[a.id for a in attachment_ids],
                 tmpl='l10n_ec_einvoice.email_template_einvoice'
             )
+        else:
+            raise UserError('Ingresar correo electrónico en el cliente')
 
     @api.multi
     def invoice_print(self):

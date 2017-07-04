@@ -27,6 +27,11 @@ tpIdCliente = {
     'pasaporte': '06'
 }
 
+tpEntidad = {
+    '9': '02',
+    '6': '01',
+    '0': '00'
+}
 
 class AccountAts(dict):
     """
@@ -78,7 +83,7 @@ class WizardAts(models.TransientModel):
                     }
                 temp[line.code]['baseImpAir'] += line.base
                 temp[line.code]['codRetAir'] = line.code  # noqa
-                temp[line.code]['porcentajeAir'] = int(line.tax_id.amount)  # noqa
+                temp[line.code]['porcentajeAir'] = abs(int(line.tax_id.amount))  # noqa
                 temp[line.code]['valRetAir'] += abs(line.amount)
         for k, v in temp.items():
             data_air.append(v)
@@ -130,7 +135,7 @@ class WizardAts(models.TransientModel):
             'estabRetencion1': wh.auth_id.serie_entidad,
             'ptoEmiRetencion1': wh.auth_id.serie_emision,
             'secRetencion1': wh.name[6:15],
-            'autRetencion1': wh.auth_id.name,
+            'autRetencion1': wh.auth_id.is_electronic and wh.numero_autorizacion or wh.auth_id.name,
             'fechaEmiRet1': convertir_fecha(wh.date)
         }
 
@@ -198,14 +203,17 @@ class WizardAts(models.TransientModel):
                 detallecompras = {}
                 auth = inv.auth_inv_id
                 valRetBien10, valRetServ20, valorRetBienes, valorRetServicios, valRetServ100 = self._get_ret_iva(inv)  # noqa
+                if inv.type == 'liq_purchase':
+                    ref = inv.auth_inv_id.name
+                else:
+                    ref = inv.auth_number
+                ret = ''
                 t_reeb = 0.0
                 if not inv.auth_inv_id.type_id.code == '41':
+                    ret = self.process_lines(inv.tax_line_ids)
                     t_reeb = 0.00
                 else:
-                    if inv.type == 'liq_purchase':
-                        t_reeb = 0.0
-                    else:
-                        t_reeb = inv.amount_untaxed
+                    t_reeb = inv.amount_untaxed
                 detallecompras.update({
                     'codSustento': inv.sustento_id.code,
                     'tpIdProv': tpIdProv[inv.partner_id.type_identifier],
@@ -213,11 +221,11 @@ class WizardAts(models.TransientModel):
                     'tipoComprobante': inv.type == 'liq_purchase' and '03' or auth.type_id.code,  # noqa
                     'parteRel': 'NO',
                     'fechaRegistro': convertir_fecha(inv.date_invoice),
-                    'establecimiento': inv.invoice_number[:3],
-                    'puntoEmision': inv.invoice_number[3:6],
-                    'secuencial': inv.invoice_number[6:15],
+                    'establecimiento': inv.auth_inv_id.serie_entidad,
+                    'puntoEmision': inv.auth_inv_id.serie_emision,
+                    'secuencial': inv.reference,
                     'fechaEmision': convertir_fecha(inv.date_invoice),
-                    'autorizacion': inv.reference,
+                    'autorizacion': ref,
                     'baseNoGraIva': '%.2f' % inv.amount_novat,
                     'baseImponible': '%.2f' % inv.amount_vat_cero,
                     'baseImpGrav': '%.2f' % inv.amount_vat,
@@ -239,7 +247,7 @@ class WizardAts(models.TransientModel):
                         'pagoExtSujRetNorLeg': 'NA'
                     },
                     'formaPago': inv.epayment_id.code,
-                    'detalleAir': self.process_lines(inv.tax_line_ids)
+                    'detalleAir': ret
                 })
                 if inv.retention_id:
                     detallecompras.update({'retencion': True})
@@ -259,14 +267,15 @@ class WizardAts(models.TransientModel):
     def read_ventas(self, period):
         dmn = [
             ('state', 'in', ['open', 'paid']),
-            ('type', '=', 'out_invoice'),
-            ('auth_inv_id.is_electronic', '!=', True)
+            ('type', '=', 'out_invoice')
         ]
         dmn += period.get_domain('date_invoice')
         ventas = []
         for inv in self.env['account.invoice'].search(dmn):
             detalleventas = {
                 'tpIdCliente': tpIdCliente[inv.partner_id.type_identifier],
+                'tipoCliente': tpEntidad[inv.partner_id.tipo_persona],
+                'denoCli': inv.partner_id.name,
                 'idCliente': inv.partner_id.identifier,
                 'parteRelVtas': 'NO',
                 'partner': inv.partner_id,
@@ -308,8 +317,11 @@ class WizardAts(models.TransientModel):
                 numComp += 1
                 partner_temp = i['partner']
                 auth_temp = i['auth']
+            partner_temp.name
             detalle = {
                 'tpIdCliente': tpIdCliente[partner_temp.type_identifier],
+                'tipoCliente': tpEntidad[partner_temp.tipo_persona],
+                'denoCli': partner_temp.name,
                 'idCliente': ruc,
                 'parteRelVtas': 'NO',
                 'tipoComprobante': auth_temp.type_id.code,
@@ -344,8 +356,8 @@ class WizardAts(models.TransientModel):
                 'tipoComprobante': auth.type_id.code,
                 'establecimiento': auth.serie_entidad,
                 'ptoEmision': auth.serie_emision,
-                'secuencialInicio': inv.invoice_number[6:9],
-                'secuencialFin': inv.invoice_number[6:9],
+                'secuencialInicio': inv.invoice_number[6:],
+                'secuencialFin': inv.invoice_number[6:],
                 'autorizacion': aut
             }
             anulados.append(detalleanulados)
@@ -362,8 +374,8 @@ class WizardAts(models.TransientModel):
                 'tipoComprobante': auth.type_id.code,
                 'establecimiento': auth.serie_entidad,
                 'ptoEmision': auth.serie_emision,
-                'secuencialInicio': ret.name[6:9],
-                'secuencialFin': ret.name[6:9],
+                'secuencialInicio': ret.name[6:],
+                'secuencialFin': ret.name[6:],
                 'autorizacion': aut
             }
             anulados.append(detalleanulados)
