@@ -73,7 +73,7 @@ class AccountInvoiceLine(models.Model):
         if line.uom_id.id != line.product_id.uom_id.id:
             price_unit *= line.uom_id.factor / line.product_id.uom_id.factor  # noqa
         if invoice.currency_id != invoice.company_id.currency_id:
-            price_unit = invoice.currency_id.compute(price_unit, order.company_id.currency_id, round=False)  # noqa
+            price_unit = invoice.currency_id.compute(price_unit, invoice.company_id.currency_id, round=False)  # noqa
         return price_unit
 
     @api.multi
