@@ -5,7 +5,7 @@
 import time
 from datetime import datetime
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, UserError, RedirectWarning
 
 
@@ -190,6 +190,7 @@ class ResPartner(models.Model):
             'in_refund': '05',
             'liq_purchase': '03',
             'ret_in_invoice': '07',
+            'stock_picking': '06',
         }
         code = map_type[type_document]
         for a in self.authorisation_ids:

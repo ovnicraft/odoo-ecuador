@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <report
+            id="l10n_ec_einvoice.erefguide"
+            model="stock.picking"
+            string="Guía de remisión"
+            report_type="qweb-pdf"
+            name="l10n_ec_einvoice_picking.report_erefguide"
+            file="l10n_ec_einvoice_picking.report_erefguide"
+            attachment_use="True"
+            attachment="('GUIA_'+(object.name or '').replace('/','')+'.pdf')"
+    />
+
+    <record id="l10n_ec_einvoice.erefguide" model="ir.actions.report.xml">
+      <field name="paperformat_id" ref="l10n_ec_einvoice.report_edocs_paperformat"/>
+    </record>
+
+  </data>
+</odoo>

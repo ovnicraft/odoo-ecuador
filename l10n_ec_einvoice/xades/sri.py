@@ -20,7 +20,7 @@ SCHEMAS = {
     'out_invoice': 'schemas/factura.xsd',
     'out_refund': 'schemas/nota_credito.xsd',
     'withdrawing': 'schemas/retencion.xsd',
-    'delivery': 'schemas/guia_remision.xsd',
+    'stock_picking': 'schemas/guia_remision.xsd',
     'in_refund': 'schemas/nota_debito.xsd'
 }
 

@@ -25,7 +25,8 @@ class Edocument(models.AbstractModel):
     _name = 'account.edocument'
     _FIELDS = {
         'account.invoice': 'invoice_number',
-        'account.retention': 'name'
+        'account.retention': 'name',
+        'stock.picking': 'picking_number'
     }
     SriServiceObj = SriService()
 
@@ -65,6 +66,8 @@ class Edocument(models.AbstractModel):
             return document.auth_inv_id
         elif document._name == 'account.retention':
             return partner.get_authorisation('ret_in_invoice')
+        elif document._name == 'stock.picking':
+            return partner.get_authorisation('stock_picking')
 
     def get_secuencial(self):
         return getattr(self, self._FIELDS[self._name])[6:]
@@ -102,13 +105,17 @@ class Edocument(models.AbstractModel):
             auth = self.company_id.partner_id.get_authorisation('ret_in_invoice')  # noqa
             ld = self.date.split('-')
             numero = getattr(self, 'name')
+        elif name == 'stock.picking':
+            auth = self.company_id.partner_id.get_authorisation('stock_picking')  # noqa
+            ld = self.min_date.split(' ')[0]
+            ld = ld.split('-')
+            numero = getattr(self, 'picking_number')
         ld.reverse()
         fecha = ''.join(ld)
         tcomp = utils.tipoDocumento[auth.type_id.code]
         ruc = self.company_id.partner_id.identifier
         codigo_numero = self.get_code()
         tipo_emision = self.company_id.emission_code
-        print fecha, tcomp, ruc, numero, codigo_numero, tipo_emision
         access_key = (
             [fecha, tcomp, ruc],
             [numero, codigo_numero, tipo_emision]
@@ -134,7 +141,8 @@ class Edocument(models.AbstractModel):
             ' comprobante inmediatamente anterior.'])
         FIELD = {
             'account.invoice': 'invoice_number',
-            'account.retention': 'name'
+            'account.retention': 'name',
+            'stock.picking': 'name'
         }
         number = getattr(self, FIELD[self._name])
         sql = ' '.join([
