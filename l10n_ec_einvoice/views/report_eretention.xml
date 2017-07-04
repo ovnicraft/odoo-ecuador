@@ -13,14 +13,14 @@
                                         <img t-if="res_company.logo" t-att-src="'data:image/png;base64,%s' % res_company.logo"/>
                                     </div><br/>
                                     <h4><span t-esc="res_company.name"/></h4>
-                                    <span><strong>DIRECCION: </strong></span><strong></strong><span t-esc="res_company.street"/><br/>
+                                    <span><strong>DIRECCION: </strong></span><span t-esc="res_company.street"/><br/>
                                     <span><strong>Contribuyente Especial Nro.: </strong></span>
                                     <span t-esc="res_company.company_registry or '000' "/><br/>
                                     <span><strong>Obligado a Llevar contabilidad: </strong> SI</span>
                                 </div>
                                 <div class="col-xs-7">
                                     <span><strong>RUC </strong></span> <span t-esc="res_company.partner_id.identifier"/><br/>
-                                    <span><h4 style="text-align: center;">COMPROBANTE DE RETENCION</h4></span><br/>
+                                    <span><h4 style="text-align: center;">COMPROBANTE DE RETENCIÓN</h4></span><br/>
                                     <span><strong>NUMERO</strong> </span><span t-esc="o.name"/><br/>
                                     <span><strong>NUMERO DE AUTORIZACION</strong></span><br/>
                                     <span t-esc="o.numero_autorizacion"/><br/>
