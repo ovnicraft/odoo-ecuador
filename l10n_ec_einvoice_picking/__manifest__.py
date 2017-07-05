@@ -18,5 +18,6 @@
         'account',
         'stock',
         'l10n_ec_einvoice'
-    ]
+    ],
+    'installable': False,
 }
