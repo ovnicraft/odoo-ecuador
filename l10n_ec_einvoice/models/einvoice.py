@@ -20,6 +20,7 @@ class AccountInvoice(models.Model):
     _name = 'account.invoice'
     _inherit = ['account.invoice', 'account.edocument']
     _logger = logging.getLogger('account.edocument')
+
     TEMPLATES = {
         'out_invoice': 'out_invoice.xml',
         'out_refund': 'out_refund.xml'

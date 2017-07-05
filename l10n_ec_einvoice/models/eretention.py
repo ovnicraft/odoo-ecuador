@@ -55,7 +55,7 @@ class AccountWithdrawing(models.Model):
             if linea.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv']:
                 return utils.tabla21[line.tax_id.percent_report]
             else:
-                code = linea.tax_id.code_tax  # noqa
+                code = linea.tax_id.description
                 return code
 
         impuestos = []
@@ -108,9 +108,9 @@ class AccountWithdrawing(models.Model):
         """
         """
         for obj in self:
-            #self.check_date(obj.date)
+            self.check_date(obj.date)
             self.check_before_sent()
-            access_key, emission_code = self._get_codes('account.retention')
+            access_key, emission_code = self._get_codes(name='account.retention')
             ewithdrawing = self.render_document(obj, access_key, emission_code)
             self._logger.debug(ewithdrawing)
             inv_xml = DocumentXML(ewithdrawing, 'withdrawing')
@@ -145,7 +145,8 @@ class AccountWithdrawing(models.Model):
         '''
         if self.partner_id.email:
             attach = self.env['ir.attachment']
-            attachment_ids = attach.search([('res_model', '=', 'account.retention'),('res_id','=',self.id)])
+            attachment_ids = attach.search(
+                [('res_model', '=', 'account.retention'), ('res_id', '=', self.id)])
             if attachment_ids:
                 self.attachment_count = len(attachment_ids)
             self.send_document(
@@ -159,19 +160,20 @@ class AccountWithdrawing(models.Model):
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
-    @api.one
+    @api.multi
     def action_generate_eretention(self):
         for obj in self:
-            if not obj.journal_id.auth_ret_id.is_electronic:
+            if not obj.journal_id.auth_retention_id.is_electronic:
                 return True
             obj.retention_id.action_generate_document()
 
     @api.multi
-    def action_retention_create(self):
-        super(AccountInvoice, self).action_retention_create()
+    def action_withholding_create(self):
+        super(AccountInvoice, self).action_withholding_create()
         for obj in self:
             if obj.type in ['in_invoice', 'liq_purchase']:
-                self.action_generate_eretention()
+                obj.action_generate_eretention()
+
 
 class AccountTax(models.Model):
     _inherit = 'account.tax'

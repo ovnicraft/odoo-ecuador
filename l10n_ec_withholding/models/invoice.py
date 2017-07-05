@@ -8,7 +8,8 @@ import logging
 from openerp import (
     api,
     fields,
-    models
+    models,
+    _
 )
 from openerp.exceptions import (
     Warning as UserError

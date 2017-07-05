@@ -17,7 +17,6 @@
             <field name="header_line" eval="False"/>
             <field name="header_spacing">20</field>
         </record>
-    </data>
 
       <report
           id="account.account_invoices"
@@ -44,4 +43,5 @@
     <record id="account.account_invoices" model="ir.actions.report.xml">
         <field name="paperformat_id" ref="report_edocs_paperformat"/>
     </record>
+  </data>
 </odoo>

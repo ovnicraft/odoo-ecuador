@@ -10,12 +10,12 @@
         'security/ir.model.access.csv',
         'data/data_einvoice.xml',
         'data/account.epayment.csv',
+        'views/edocument_layouts.xml',
         'edi/einvoice_edi.xml',
         'views/einvoice_view.xml',
         'views/partner_view.xml',
         'views/report_einvoice.xml',
         'views/report_eretention.xml',
-        'views/edocument_layouts.xml',
     ],
     'depends': [
         'l10n_ec_withholding',

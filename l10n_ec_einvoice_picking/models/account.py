@@ -1,33 +1,55 @@
 # -*- coding: utf-8 -*-
 # © <2016> <Cristian Salamea>
+# © <2017> <Jonathan Finlay>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import (
-    api,
-    models,
-    _
-)
-from odoo.tools.float_utils import float_compare
+from openerp import api, models, fields, _
 
+from openerp.tools.float_utils import float_compare
+from openerp.exceptions import Warning as UserError
+
+
+class AccountJournal(models.Model):
+    _inherit = 'account.journal'
+
+    auth_erefguide_id = fields.Many2one(
+        'account.authorisation',
+        'Para Guías'
+    )
 
 class AccountInvoice(models.Model):
-
     _inherit = 'account.invoice'
+
+    picking_id = fields.Many2one('stock.picking', 'Picking')
+
+    @api.multi
+    def action_generate_erefguide(self):
+        for obj in self:
+            if not obj.journal_id.auth_erefguide_id.is_electronic:
+                return True
+            obj.picking_id.action_generate_document()
+
+    @api.multi
+    def action_erefguide_create(self):
+        for obj in self:
+            if obj.type in ['in_invoice', 'liq_purchase']:
+                obj.action_generate_erefguide()
 
     @api.model
     def _prepare_picking(self):
         # TODO: picking_type_id, location_id
-        picking_type = self.env['stock.picking.type'].search([('code', '=', 'incoming')], limit=1)  # noqa
-        if not self.partner_id.property_stock_supplier.id:
-            raise UserError(_("You must set a Vendor Location for this partner %s") % self.partner_id.name)  # noqa
+        picking_type = self.env['stock.picking.type'].search([('code', '=', 'outgoing')], limit=1)  # noqa
+        if not self.partner_id.property_stock_customer.id:
+            raise UserError(_("You must set a Customer Location for this partner %s") % self.partner_id.name)  # noqa
         return {
             'picking_type_id': picking_type.id,
             'partner_id': self.partner_id.id,
             'date': self.date_invoice,
             'origin': self.reference,
-            'location_dest_id': picking_type.default_location_dest_id.id,
-            'location_id': self.partner_id.property_stock_supplier.id,
+            'location_dest_id': self.partner_id.property_stock_customer.id,
+            'location_id': picking_type.default_location_src_id.id,
             'company_id': self.company_id.id,
+            'auth_id': self.journal_id.auth_erefguide_id.id,
         }
 
     @api.multi
@@ -41,6 +63,7 @@ class AccountInvoice(models.Model):
                 moves = moves.filtered(lambda x: x.state not in ('done', 'cancel')).action_confirm()  # noqa
                 moves.force_assign()
                 picking.do_transfer()
+                inv.picking_id = picking
         return True
 
     @api.multi
@@ -55,7 +78,8 @@ class AccountInvoice(models.Model):
         to_open_invoices.action_move_create()
         to_open_invoices.action_number()
         to_open_invoices.action_withholding_create()
-        to_open_invoices.create_picking()
+        if self.type != 'in_invoice':
+            to_open_invoices.create_picking()
         return to_open_invoices.invoice_validate()
 
 
@@ -69,7 +93,9 @@ class AccountInvoiceLine(models.Model):
         invoice = line.invoice_id
         price_unit = line.price_unit
         if line.invoice_line_tax_ids:
-            price_unit = line.invoice_line_tax_ids.with_context(round=False).compute_all(price_unit, currency=invoice.currency_id, quantity=1.0)['total_excluded']  # noqa
+            price_unit = \
+            line.invoice_line_tax_ids.with_context(round=False).compute_all(price_unit, currency=invoice.currency_id,
+                                                                            quantity=1.0)['total_excluded']  # noqa
         if line.uom_id.id != line.product_id.uom_id.id:
             price_unit *= line.uom_id.factor / line.product_id.uom_id.factor  # noqa
         if invoice.currency_id != invoice.company_id.currency_id:
@@ -91,8 +117,8 @@ class AccountInvoiceLine(models.Model):
                 'product_uom': line.uom_id.id,
                 'date': line.invoice_id.date_invoice,
                 'date_expected': line.invoice_id.date_invoice,
-                'location_id': line.invoice_id.partner_id.property_stock_supplier.id,  # noqa
-                'location_dest_id': picking.picking_type_id.default_location_dest_id.id,  # noqa
+                'location_id': picking.picking_type_id.default_location_src_id.id,  # noqa
+                'location_dest_id': line.invoice_id.partner_id.property_stock_customer.id,  # noqa
                 'picking_id': picking.id,
                 'partner_id': line.invoice_id.partner_id.id,
                 'move_dest_id': False,
@@ -102,7 +128,8 @@ class AccountInvoiceLine(models.Model):
                 'picking_type_id': picking.picking_type_id.id,
                 'procurement_id': False,
                 'origin': line.invoice_id.invoice_number,
-                'route_ids': picking.picking_type_id.warehouse_id and [(6, 0, [x.id for x in picking.picking_type_id.warehouse_id.route_ids])] or [],  # noqa
+                'route_ids': picking.picking_type_id.warehouse_id and [
+                    (6, 0, [x.id for x in picking.picking_type_id.warehouse_id.route_ids])] or [],  # noqa
                 'warehouse_id': picking.picking_type_id.warehouse_id.id,
             }
             # Fullfill all related procurements with this po line
@@ -111,3 +138,4 @@ class AccountInvoiceLine(models.Model):
                 template['product_uom_qty'] = diff_quantity
                 done += moves.create(template)
         return done
+
