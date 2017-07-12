@@ -3,6 +3,11 @@
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning
 from odoo.exceptions import UserError
+import xlwt
+from pytz import timezone
+import datetime
+import cStringIO
+import base64
 
 
 class account_move_line(models.Model):
@@ -55,6 +60,116 @@ class account_bank_statement(models.Model):
         return super(account_bank_statement, self.with_context(
             cancel_from_statement=True)).button_cancel()
 
+    @api.multi
+    def bank_reconciliation_report(self):
+        journal_ids = self.env['account.journal']
+        move_line_ids = self.env['account.move.line']
+        filename = 'BankReconciliation.xls'
+        workbook = xlwt.Workbook(encoding='utf-8', style_compression=2)
+        worksheet = workbook.add_sheet('Moves')
+        style = xlwt.easyxf('font:height 200, bold True, name Arial; align: horiz center, vert center;borders: top medium,right medium,bottom medium,left medium')
+        style0 = xlwt.easyxf('font: name Times New Roman, color-index black, bold on')
+        for obj in self:
+            worksheet.write_merge(0, 2, 0, 11, str(obj.company_id.name) + u'\n Bank Reconciliation\n' + str(datetime.datetime.now(timezone('America/Guayaquil'))),style)
+            fila = 4
+            columna = 0
+            worksheet.write(fila, columna, obj.name, style0)
+            fila = fila + 1
+            worksheet.write(fila, 0, 'Fecha: ' + obj.date, style0)
+            worksheet.write(fila, 6, 'Usuario: ' + obj.user_id.partner_id.name , style0)
+            fila = fila + 1
+            worksheet.write(fila, 0, 'Saldo Inicial: ' + str(obj.balance_start), style0)
+            worksheet.write(fila, 6, 'Saldo Final: ' + str(obj.balance_end_real), style0)
+            fila = fila + 1
+            worksheet.write(fila, 0, 'Banco: ' + obj.journal_id.default_debit_account_id.name, style0)
+            fila = fila + 1
+            worksheet.write(fila, 0, 'Fecha', style0)
+            worksheet.write(fila, 1, u'Número', style0)
+            worksheet.write(fila, 3, 'Referencia', style0)
+            worksheet.write(fila, 6, 'Empresa', style0)
+            worksheet.write(fila, 10, 'Debe', style0)
+            worksheet.write(fila, 11, 'Haber', style0)
+            fila = fila + 1
+            td = 0
+            tc = 0
+            for lids in obj.line_ids:
+                worksheet.write(fila, 0, lids.date)
+                worksheet.write(fila, 1, lids.name)
+                worksheet.write(fila, 3, lids.ref)
+                worksheet.write(fila, 6, lids.partner_id.name)
+                if lids.amount > 0:
+                    worksheet.write(fila, 10, lids.amount)
+                    td = td + lids.amount
+                else:
+                    worksheet.write(fila, 11, abs(lids.amount))
+                    tc = tc + abs(lids.amount)
+                fila = fila + 1
+            worksheet.write(fila, 8, 'Total:', style0)
+            worksheet.write(fila, 10, td, style0)
+            worksheet.write(fila, 11, tc, style0)
+            totalc = td - tc
+            fila = fila + 1
+            worksheet.write(fila, 8, 'Total Conciliado: ' + str(totalc), style0)
+            fila = fila + 2
+            worksheet.write(fila, 0, 'Transacciones no Conciliadas', style0)
+            account_journal_ids = journal_ids.search([
+                ('default_debit_account_id', '=', obj.journal_id.default_debit_account_id.id),
+                ('default_credit_account_id', '=', obj.journal_id.default_credit_account_id.id)]
+            )
+            fila = fila + 1
+            worksheet.write(fila, 0, 'Fecha', style0)
+            worksheet.write(fila, 1, u'Número', style0)
+            worksheet.write(fila, 3, 'Referencia', style0)
+            worksheet.write(fila, 6, 'Empresa', style0)
+            worksheet.write(fila, 10, 'Debe', style0)
+            worksheet.write(fila, 11, 'Haber', style0)
+            fila = fila + 1
+            tdnc = 0
+            tcnc = 0
+            for journal_line in account_journal_ids:
+                move_lines = move_line_ids.search([
+                    ('journal_id', '=', journal_line.id),
+                    ('account_id', '=', journal_line.default_debit_account_id.id),
+                    ('statement_id', '=', False),
+                    ('exclude_on_statements', '=', False),
+                    ('date', '<=', obj.date)])
+                for move_line in move_lines:
+                    worksheet.write(fila, 0, move_line.date)
+                    worksheet.write(fila, 1, move_line.name)
+                    worksheet.write(fila, 3, move_line.ref)
+                    worksheet.write(fila, 6, move_line.partner_id.name)
+                    worksheet.write(fila, 10, move_line.debit)
+                    worksheet.write(fila, 11, move_line.credit)
+                    tdnc = tdnc + move_line.debit
+                    tcnc = tcnc + move_line.credit
+                    fila = fila + 1
+            tnc = tdnc - tcnc
+            worksheet.write(fila, 9, 'Total No conciliado:' + str(tnc), style0)
+            fila = fila + 1
+            worksheet.write(fila, 9, 'Total Bancos:' + str(obj.balance_start + totalc + tnc) , style0)
+            fp = cStringIO.StringIO()
+            workbook.save(fp)
+            dataxls = {
+                'excel_file': base64.encodestring(fp.getvalue()),
+                'file_name': filename
+            }
+            export_id = self.env['excel.extended'].create(dataxls)
+            fp.close()
+
+        return{
+            'view_mode': 'form',
+            'res_id': export_id.id,
+            'res_model': 'excel.extended',
+            'view_type': 'form',
+            'type': 'ir.actions.act_window',
+            'context': None,
+            'target': 'new',
+        }
+
+class inventory_excel_extended(models.Model):
+    _name = "excel.extended"
+    excel_file = fields.Binary('Reporte Excel')
+    file_name = fields.Char('Excel File', size=64)
 
 class account_bank_statement_line(models.Model):
     _inherit = 'account.bank.statement.line'
