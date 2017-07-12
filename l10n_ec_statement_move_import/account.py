@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api, _
-from openerp.exceptions import Warning
-from odoo.exceptions import UserError
-import xlwt
-from pytz import timezone
 import datetime
 import cStringIO
 import base64
+import xlwt
+from pytz import timezone
+from odoo import models, fields, api, _
+from odoo.exceptions import Warning
+from odoo.exceptions import UserError
 
 
-class account_move_line(models.Model):
+class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
     exclude_on_statements = fields.Boolean(
@@ -30,13 +30,13 @@ class account_move_line(models.Model):
             self.env['account.move'].browse(list(move_ids))._check_lock_date()
 
 
-class account_move(models.Model):
+class AccountMove(models.Model):
     _inherit = 'account.move'
 
     @api.multi
     def button_cancel(self):
         if self._context.get('cancel_from_statement_line', False):
-            return super(account_move, self).button_cancel()
+            return super(AccountMove, self).button_cancel()
 
         statement_lines = self.env['account.bank.statement.line']
         statement_lines = statement_lines.sudo().search([
@@ -49,22 +49,22 @@ class account_move(models.Model):
                 "statement first. Related Statements: '%s'") % (
                     ', '.join(statement_lines.mapped('statement_id.name'))))
         else:
-            return super(account_move, self).button_cancel()
+            return super(AccountMove, self).button_cancel()
 
 
-class account_bank_statement(models.Model):
+class AccountBankStatement(models.Model):
     _inherit = 'account.bank.statement'
 
     @api.multi
     def button_cancel(self):
-        return super(account_bank_statement, self.with_context(
+        return super(AccountBankStatement, self.with_context(
             cancel_from_statement=True)).button_cancel()
 
     @api.multi
     def bank_reconciliation_report(self):
         journal_ids = self.env['account.journal']
         move_line_ids = self.env['account.move.line']
-        filename = 'BankReconciliation.xls'
+        filename = 'BankReconciliation/%s.xls' % (self.date)
         workbook = xlwt.Workbook(encoding='utf-8', style_compression=2)
         worksheet = workbook.add_sheet('Moves')
         style = xlwt.easyxf('font:height 200, bold True, name Arial; align: horiz center, vert center;borders: top medium,right medium,bottom medium,left medium')
@@ -166,12 +166,14 @@ class account_bank_statement(models.Model):
             'target': 'new',
         }
 
-class inventory_excel_extended(models.Model):
+
+class InventoryExcelExtended(models.Model):
     _name = "excel.extended"
     excel_file = fields.Binary('Reporte Excel')
     file_name = fields.Char('Excel File', size=64)
 
-class account_bank_statement_line(models.Model):
+
+class AccountBankStatementLine(models.Model):
     _inherit = 'account.bank.statement.line'
 
     imported_line_id = fields.Many2one(
@@ -186,7 +188,7 @@ class account_bank_statement_line(models.Model):
     @api.multi
     def cancel(self):
         if self._context.get('cancel_from_statement', False):
-            return super(account_bank_statement_line, self.filtered(
+            return super(AccountBankStatementLine, self.filtered(
                 lambda r: not r.imported_line_id and not r.imported)).cancel()
         for line in self:
             if line.imported_line_id or line.imported:
@@ -194,7 +196,7 @@ class account_bank_statement_line(models.Model):
                     'You can not cancel line "%s" as it has been imported with'
                     ' "Import Journal Items" wizard, you can delete it '
                     'instead') % ('%s - %s' % (line.name, line.ref or '')))
-        return super(account_bank_statement_line, self.with_context(
+        return super(AccountBankStatementLine, self.with_context(
             cancel_from_statement_line=True)).cancel()
 
     @api.multi
@@ -206,4 +208,4 @@ class account_bank_statement_line(models.Model):
             elif line.imported:
                 line.journal_entry_id.line_id.write({'statement_id': False})
                 line.journal_entry_id = False
-        return super(account_bank_statement_line, self).unlink()
+        return super(AccountBankStatementLine, self).unlink()
