@@ -171,7 +171,7 @@ class AccountInvoice(models.Model):
     def action_withholding_create(self):
         super(AccountInvoice, self).action_withholding_create()
         for obj in self:
-            if obj.type in ['in_invoice', 'liq_purchase']:
+            if obj.type in ['in_invoice', 'liq_purchase'] and obj.retention_id:
                 obj.action_generate_eretention()
 
 
