@@ -2,9 +2,7 @@
 
 {
     'name': 'Account Statement Move Import',
-    'version': '10.0',
     'category': 'Accounting',
-    'sequence': 14,
     'summary': '',
     'description': """
 Account Statement Move Import
@@ -31,4 +29,3 @@ Add a wizard to import moves on bank and cash statements
     'auto_install': False,
     'application': False,
 }
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
