@@ -1,3 +1,3 @@
 # -*- encoding: utf-8 -*-
 from . import wizard
-from . import account
+from . import models

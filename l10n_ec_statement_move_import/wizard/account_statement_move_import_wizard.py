@@ -2,8 +2,9 @@
 
 import datetime
 import calendar
-from openerp import fields, models, api, _
-from openerp.exceptions import Warning
+from odoo import fields, models, api, _
+from odoo.exceptions import Warning
+
 
 class account_statement_move_import_wizard(models.TransientModel):
     _name = "account.statement.move.import.wizard"
