@@ -281,6 +281,8 @@ class Invoice(models.Model):
         # lots of duplicate calls to action_invoice_open,
         # so we remove those already open
         # redefined to create withholding and numbering
+        if not len(self.reference) == 9:
+            raise UserError(_("Número de factura contiene mas de 9 dígitos."))  # noqa
         to_open_invoices = self.filtered(lambda inv: inv.state != 'open')
         if to_open_invoices.filtered(lambda inv: inv.state not in ['proforma2', 'draft']):  # noqa
             raise UserError(_("Invoice must be in draft or Pro-forma state in order to validate it."))  # noqa
