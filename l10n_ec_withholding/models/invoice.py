@@ -126,7 +126,7 @@ class Invoice(models.Model):
     @api.one
     @api.depends('tax_line_ids.tax_id')
     def _check_retention(self):
-        TAXES = ['ret_vat_b', 'ret_vat_srv', 'ret_ir', 'no_ret_ir']  # noqa
+        TAXES = ['ret_vat_b', 'ret_vat_srv', 'ret_ir']  # noqa
         for tax in self.tax_line_ids:
             if tax.tax_id.tax_group_id.code in TAXES:
                 self.has_retention = True
@@ -281,6 +281,8 @@ class Invoice(models.Model):
         # lots of duplicate calls to action_invoice_open,
         # so we remove those already open
         # redefined to create withholding and numbering
+        if not len(self.reference) == 9:
+            raise UserError(_("Número de factura contiene mas de 9 dígitos."))  # noqa
         to_open_invoices = self.filtered(lambda inv: inv.state != 'open')
         if to_open_invoices.filtered(lambda inv: inv.state not in ['proforma2', 'draft']):  # noqa
             raise UserError(_("Invoice must be in draft or Pro-forma state in order to validate it."))  # noqa
@@ -325,61 +327,58 @@ class Invoice(models.Model):
         TYPES_TO_VALIDATE = ['in_invoice', 'liq_purchase']
         wd_number = False
         for inv in self:
-            if not self.has_retention and self.retention_id:
-                continue
+            if self.has_retention and not self.retention_id:
+                # Autorizacion para Retenciones de la Empresa
+                auth_ret = inv.journal_id.auth_retention_id
+                if inv.type in ['in_invoice', 'liq_purchase'] and not auth_ret:
+                    raise UserError(
+                        u'No ha configurado la autorización de retenciones.'
+                    )
 
-            # Autorizacion para Retenciones de la Empresa
-            auth_ret = inv.journal_id.auth_retention_id
-            if inv.type in ['in_invoice', 'liq_purchase'] and not auth_ret:
-                raise UserError(
-                    u'No ha configurado la autorización de retenciones.'
-                )
+                if self.create_retention_type == 'manual':
+                    wd_number = inv.withholding_number
 
-            if self.create_retention_type == 'manual':
-                wd_number = inv.withholding_number
+                # move to constrains ?
+                if inv.create_retention_type == 'manual' and inv.withholding_number <= 0:  # noqa
+                    raise UserError(u'El número de retención es incorrecto.')
+                    # TODO: read next number
 
-            # move to constrains ?
-            if inv.create_retention_type == 'manual' and inv.withholding_number <= 0:  # noqa
-                raise UserError(u'El número de retención es incorrecto.')
-                # TODO: read next number
+                if inv.create_retention_type == 'auto' and inv.type in ['in_invoice', 'liq_purchase']:
+                    sequence = inv.journal_id.auth_retention_id.sequence_id
+                    wd_number = self.env['ir.sequence'].get(sequence.code)
+                    number = '{0}{1}{2}'.format(inv.journal_id.auth_retention_id.serie_entidad,
+                                            inv.journal_id.auth_retention_id.serie_emision,
+                                            wd_number.zfill(9))
+                else:
+                    number = wd_number
 
-            if inv.create_retention_type == 'auto' and inv.type in ['in_invoice', 'liq_purchase']:
-                sequence = inv.journal_id.auth_retention_id.sequence_id
-                wd_number = self.env['ir.sequence'].get(sequence.code)
-                number = '{0}{1}{2}'.format(inv.journal_id.auth_retention_id.serie_entidad,
-                                        inv.journal_id.auth_retention_id.serie_emision,
-                                        wd_number.zfill(9))
-            else:
-                number = wd_number
+                ret_taxes = inv.tax_line_ids.filtered(lambda l: l.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv', 'ret_ir'])  # noqa
 
-            ret_taxes = inv.tax_line_ids.filtered(lambda l: l.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv', 'ret_ir'])  # noqa
+                if inv.retention_id:
+                    ret_taxes.write({
+                        'retention_id': inv.retention_id.id,
+                        'num_document': inv.invoice_number
+                    })
+                    inv.retention_id.action_validate(number)
+                    return True
 
-            if inv.retention_id:
-                ret_taxes.write({
-                    'retention_id': inv.retention_id.id,
-                    'num_document': inv.invoice_number
-                })
-                inv.retention_id.action_validate(number)
-                return True
+                withdrawing_data = {
+                    'partner_id': inv.partner_id.id,
+                    'name': number,
+                    'invoice_id': inv.id,
+                    'auth_id': auth_ret.id,
+                    'type': inv.type,
+                    'in_type': 'ret_%s' % inv.type,
+                    'date': inv.date_invoice,
+                    'manual': False
+                }
+                withdrawing = self.env['account.retention'].create(withdrawing_data)  # noqa
+                ret_taxes.write({'retention_id': withdrawing.id, 'num_document': inv.reference})  # noqa
 
-            withdrawing_data = {
-                'partner_id': inv.partner_id.id,
-                'name': number,
-                'invoice_id': inv.id,
-                'auth_id': auth_ret.id,
-                'type': inv.type,
-                'in_type': 'ret_%s' % inv.type,
-                'date': inv.date_invoice,
-                'manual': False
-            }
-            print withdrawing_data
-            withdrawing = self.env['account.retention'].create(withdrawing_data)  # noqa
-            ret_taxes.write({'retention_id': withdrawing.id, 'num_document': inv.reference})  # noqa
+                if inv.type in TYPES_TO_VALIDATE:
+                    withdrawing.action_validate(number)
 
-            if inv.type in TYPES_TO_VALIDATE:
-                withdrawing.action_validate(number)
-
-            inv.write({'retention_id': withdrawing.id})
+                inv.write({'retention_id': withdrawing.id})
         return True
 
     @api.multi
