@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+
+        <record id="view_move_line_form" model="ir.ui.view">
+            <field name="name">account.move.line.form</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_form"/>
+            <field name="arch" type="xml">
+                <field name="statement_id" position="after">
+                    <field name="exclude_on_statements"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_bank_statement_form" model="ir.ui.view">
+            <field name="name">account.bank.statement.form.inherit.import</field>
+            <field name="model">account.bank.statement</field>
+            <field name="inherit_id" ref="account.view_bank_statement_form"/>
+            <field name="arch" type="xml">
+                <field name='name' position="after">
+                      <button class="oe_right oe_stat_button" name="%(action_account_statement_move_import_wizard)d" string="Import Journal Items" type="action" attrs="{'invisible':[('state','=','confirm')]}" widget="statinfo" icon="fa-pencil-square-o"/>
+                </field>
+                <field name='balance_end_real' position="after">
+                    <button name="bank_reconciliation_report" string="Reporte" type="object" class="oe_stat_button oe_right" icon="fa-file-excel-o"/>
+                </field>
+            </field>
+        </record>
+                <!-- xml excel -->
+        <record id="view_excel_form_extended" model="ir.ui.view">
+            <field name="name">excel.extended.form</field>
+            <field name="model">excel.extended</field>
+            <field name="arch" type="xml">
+                <form string="Excel Report file">
+                    <group>
+                        <field name="excel_file" readonly="1" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="action_excel_form" model="ir.actions.act_window">
+            <field name="name">Reportes Excel</field>
+            <field name="view_id" ref="view_excel_form_extended"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="res_model">excel.extended</field>
+            <field name="target">new</field>
+        </record>
+	</data>
+</odoo>

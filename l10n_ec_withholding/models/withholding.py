@@ -60,6 +60,7 @@ class AccountWithdrawing(models.Model):
 
     _name = 'account.retention'
     _description = 'Withdrawing Documents'
+    _inherit = ['mail.thread']
     _order = 'date DESC'
 
     name = fields.Char(
