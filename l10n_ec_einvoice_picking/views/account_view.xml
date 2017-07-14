@@ -9,7 +9,7 @@
         <field name="inherit_id" ref="l10n_ec_einvoice.view_account_einvoice_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='move_id']" position="after">
-                <field name="picking_id"/>
+                <field name="picking_id" attrs="{'readonly':[('picking_autorizado','=',True)]}"/>
                 <field name="picking_autorizado"/>
             </xpath>
             <xpath expr="//button[@name='action_generate_einvoice']" position="after">

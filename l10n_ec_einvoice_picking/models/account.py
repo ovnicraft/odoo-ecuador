@@ -39,6 +39,12 @@ class AccountInvoice(models.Model):
         if self.picking_id:
             context['default_picking_id'] = self.picking_id.id
             context['default_picking_mode'] = 'manual'
+            context['default_carrier_id'] = self.picking_id.carrier_id.id if self.picking_id.carrier_id else ''
+            context['default_carrier_plate'] = self.picking_id.carrier_plate if self.picking_id.carrier_plate else ''
+            context['default_reason'] = self.picking_id.reason_id.id if self.picking_id.reason_id else ''
+            context['default_route'] = self.picking_id.route if self.picking_id.route else ''
+            context['default_max_date'] = self.picking_id.max_date if self.picking_id.max_date else ''
+
         action = self.env.ref('l10n_ec_einvoice_picking.action_erefguide_wizard').read()[0]
         action['context'] = context
         return action
