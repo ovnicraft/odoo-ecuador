@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="wizard_picking_invoice_create_form" model="ir.ui.view">
+            <field name="name">Guia de remision</field>
+            <field name="model">picking_invoice_create</field>
+            <field name="arch" type="xml">
+                <form string="Guia de remision" version="7">
+                    <sheet>
+                        <group string="Por favor llenar los campos para la generacion de la Guia de Remision." col="4">
+                            <field name="carrier_id"/>
+                            <field name="carrier_plate"/>
+                            <field name="max_date"/>
+                            <field name="reason" widget="selection"/>
+                            <field name="route"/>
+                            <field name="authorize_sri"/>
+                            <field name="picking_mode"/>
+                            <field name="picking_id"
+                                   attrs="{'invisible': [('picking_mode','=','auto')],'required':[('picking_mode','!=','auto')]}"
+                                   domain="{'invoice_id': active_id}"/>
+                        </group>
+                    </sheet>
+                    <footer class="oe_right">
+                        <button class="btn-primary" name="act_create_picking"
+                                string="Crear" type="object"/>
+                        <button class="btn-link" special="cancel" string="Cancelar"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_erefguide_wizard" model="ir.actions.act_window">
+            <field name="name">Generar guia</field>
+            <field name="res_model">picking_invoice_create</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="wizard_picking_invoice_create_form"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

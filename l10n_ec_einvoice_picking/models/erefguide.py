@@ -33,7 +33,7 @@ class StockPicking(models.Model):
         'Transportista')
     carrier_plate = fields.Char('Placa')
     max_date = fields.Date('Fecha máxima de entrega')
-    reason = fields.Char('Motivo')
+    reason_id = fields.Many2one('stock.picking.move.reason', 'Motivo de traslado')
     route = fields.Char('Ruta')
     auth_id = fields.Many2one(
         'account.authorisation',
@@ -54,6 +54,13 @@ class StockPicking(models.Model):
             u'El número de guía es único.'
         )
     ]
+
+    @api.multi
+    def do_authorize_sri(self):
+        for obj in self:
+            if not obj.auth_id.is_electronic:
+                return True
+            obj.action_generate_document()
 
     @api.onchange('picking_number')
     @api.constrains('picking_number')
@@ -149,7 +156,7 @@ class StockPicking(models.Model):
             'identificacionDestinatario': partner.identifier,
             'razonSocialDestinatario': partner.name,
             'dirDestinatario': partner.street2,
-            'motivoTraslado': erefguide.reason,
+            'motivoTraslado': erefguide.reason_id.name if erefguide.reason_id else '',
             'ruta': erefguide.route,
             'codDocSustento': invoice.auth_inv_id.type_id.code,
             'numDocSustento': inv_number,
@@ -250,3 +257,10 @@ class StockPicking(models.Model):
             'l10n_ec_einvoice_picking.report_erefguide'
         )
 
+
+class RefGuideReason(models.Model):
+    """Motivos del traslado"""
+    _name = 'stock.picking.move.reason'
+    _description = __doc__
+
+    name = fields.Char('Razón')

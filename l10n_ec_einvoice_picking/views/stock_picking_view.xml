@@ -8,10 +8,17 @@
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//button[@name='do_print_picking']" position="before">
+              <button name="do_authorize_sri" string="Autorizar Guía"
+                      type="object"
+                      attrs="{'invisible': [('autorizado_sri', '=', True)]}"/>
+            </xpath>
             <xpath expr="//page[@name='extra']/group" position="inside">
-              <field name="auth_id"/>
-              <field name="picking_number"/>
-              <field name="carrier_id"/>
+              <group colspan="4" col="2">
+                <field name="auth_id"/>
+                <field name="picking_number"/>
+                <field name="carrier_id"/>
+              </group>
               <group colspan="4" col="2">
                 <field name="clave_acceso"/>
                 <field name="numero_autorizacion"/>
