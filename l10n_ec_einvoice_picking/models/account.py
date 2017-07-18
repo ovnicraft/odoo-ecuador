@@ -86,8 +86,9 @@ class AccountInvoice(models.Model):
                 res[key] = item
         return res
 
-    @api.one
+    @api.multi
     def create_picking(self, vals=None):
+        self.ensure_one()
         StockPicking = self.env['stock.picking']
         if any([ptype in ['product', 'consu'] for ptype in self.invoice_line_ids.mapped('product_id.type')]):  # noqa
             res = self._prepare_picking(vals)

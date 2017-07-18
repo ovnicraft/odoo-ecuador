@@ -10,13 +10,12 @@ import itertools
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 
-from openerp import api, models, fields
-from openerp.exceptions import Warning as UserError
-from openerp.tools.float_utils import float_compare
+from odoo import api, models, fields
+from odoo.exceptions import Warning as UserError
 
-from openerp.addons.l10n_ec_einvoice.models import utils
-from openerp.addons.l10n_ec_einvoice.xades.sri import DocumentXML
-from openerp.addons.l10n_ec_einvoice.xades.xades import Xades
+from odoo.addons.l10n_ec_einvoice.models import utils
+from odoo.addons.l10n_ec_einvoice.xades.sri import DocumentXML
+from odoo.addons.l10n_ec_einvoice.xades.xades import Xades
 
 
 class StockPicking(models.Model):
