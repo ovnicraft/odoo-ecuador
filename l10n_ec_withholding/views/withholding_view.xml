@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
 
@@ -341,6 +341,29 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="view_unlink_invoice" model="ir.ui.view">
+            <field name="name">Desvincular Factura</field>
+            <field name="model">wizard.unlink.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Desvicular Factura(s)">
+                    <field name="doc_ids" widget="many2many_tags"/>
+                    <footer>
+                        <button string="Desvincular" name="action_unlink" type="object" class="btn-primary"/>
+                        <button string="Cancelar" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_unlink_invoice"
+                    name="Desvincular Factura(s)"
+                    src_model="account.retention"
+                    res_model="wizard.unlink.invoice"
+                    view_type="form"
+                    view_mode="form"
+                    key2="client_action_multi"
+                    target="new"/>
 
         <!--
             Liquidacion de Compra
