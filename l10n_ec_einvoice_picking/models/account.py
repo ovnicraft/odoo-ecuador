@@ -16,11 +16,38 @@ class AccountJournal(models.Model):
         'account.authorisation',
         'Para Guías'
     )
+    do_invoice_picking = fields.Boolean(
+        'Crear Albarán/Guía',
+        help="Crear Albarán/Guía automáticamente?")
+
 
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
-    picking_id = fields.Many2one('stock.picking', 'Picking')
+    @api.one
+    @api.depends('picking_id.autorizado_sri')
+    def picking_autorizado(self):
+        return self.picking_id.autorizado_sri
+
+    picking_id = fields.Many2one('stock.picking', 'Albarán/Guía')
+    picking_autorizado = fields.Boolean('Guía autorizada', related='picking_id.autorizado_sri')
+
+    @api.multi
+    def action_erefguide_wizard(self):
+        self.ensure_one()
+        context = {}
+        if self.picking_id:
+            context['default_picking_id'] = self.picking_id.id
+            context['default_picking_mode'] = 'manual'
+            context['default_carrier_id'] = self.picking_id.carrier_id.id if self.picking_id.carrier_id else ''
+            context['default_carrier_plate'] = self.picking_id.carrier_plate if self.picking_id.carrier_plate else ''
+            context['default_reason'] = self.picking_id.reason_id.id if self.picking_id.reason_id else ''
+            context['default_route'] = self.picking_id.route if self.picking_id.route else ''
+            context['default_max_date'] = self.picking_id.max_date if self.picking_id.max_date else ''
+
+        action = self.env.ref('l10n_ec_einvoice_picking.action_erefguide_wizard').read()[0]
+        action['context'] = context
+        return action
 
     @api.multi
     def action_generate_erefguide(self):
@@ -32,16 +59,19 @@ class AccountInvoice(models.Model):
     @api.multi
     def action_erefguide_create(self):
         for obj in self:
-            if obj.type in ['in_invoice', 'liq_purchase']:
-                obj.action_generate_erefguide()
+            if obj.type != 'out_invoice':
+                raise UserError('No puede generar guías para este tipo de documento')
+            if not obj.autorizado_sri:
+                raise UserError('La factura debe estar autorizada por el SRI')
+            obj.action_generate_erefguide()
 
     @api.model
-    def _prepare_picking(self):
+    def _prepare_picking(self, vals=None):
         # TODO: picking_type_id, location_id
         picking_type = self.env['stock.picking.type'].search([('code', '=', 'outgoing')], limit=1)  # noqa
         if not self.partner_id.property_stock_customer.id:
             raise UserError(_("You must set a Customer Location for this partner %s") % self.partner_id.name)  # noqa
-        return {
+        res = {
             'picking_type_id': picking_type.id,
             'partner_id': self.partner_id.id,
             'date': self.date_invoice,
@@ -51,36 +81,24 @@ class AccountInvoice(models.Model):
             'company_id': self.company_id.id,
             'auth_id': self.journal_id.auth_erefguide_id.id,
         }
+        if vals:
+            for key, item in vals.items():
+                res[key] = item
+        return res
 
     @api.multi
-    def create_picking(self):
+    def create_picking(self, vals=None):
+        self.ensure_one()
         StockPicking = self.env['stock.picking']
-        for inv in self:
-            if any([ptype in ['product', 'consu'] for ptype in inv.invoice_line_ids.mapped('product_id.type')]):  # noqa
-                res = inv._prepare_picking()
-                picking = StockPicking.create(res)
-                moves = inv.invoice_line_ids._create_stock_moves(picking)
-                moves = moves.filtered(lambda x: x.state not in ('done', 'cancel')).action_confirm()  # noqa
-                moves.force_assign()
-                picking.do_transfer()
-                inv.picking_id = picking
+        if any([ptype in ['product', 'consu'] for ptype in self.invoice_line_ids.mapped('product_id.type')]):  # noqa
+            res = self._prepare_picking(vals)
+            picking = StockPicking.create(res)
+            moves = self.invoice_line_ids._create_stock_moves(picking)
+            moves = moves.filtered(lambda x: x.state not in ('done', 'cancel')).action_confirm()  # noqa
+            moves.force_assign()
+            picking.do_transfer()
+            self.picking_id = picking
         return True
-
-    @api.multi
-    def action_invoice_open(self):
-        # lots of duplicate calls to action_invoice_open,
-        # so we remove those already open
-        # redefined to create withholding and numbering
-        to_open_invoices = self.filtered(lambda inv: inv.state != 'open')
-        if to_open_invoices.filtered(lambda inv: inv.state not in ['proforma2', 'draft']):  # noqa
-            raise UserError(_("Invoice must be in draft or Pro-forma state in order to validate it."))  # noqa
-        to_open_invoices.action_date_assign()
-        to_open_invoices.action_move_create()
-        to_open_invoices.action_number()
-        to_open_invoices.action_withholding_create()
-        if self.type != 'in_invoice':
-            to_open_invoices.create_picking()
-        return to_open_invoices.invoice_validate()
 
 
 class AccountInvoiceLine(models.Model):
