@@ -217,7 +217,7 @@ class AccountWithdrawing(models.Model):
         if not len(self.name) == length[self.type] or not self.name.isdigit():
             raise UserError(u'Nro incorrecto. Debe ser de 15 dígitos.')
         if self.in_type == 'ret_in_invoice':
-            if not self.auth_id.is_valid_number(int(self.name)):
+            if not self.auth_id.is_valid_number(int(self.name[6:])):
                 raise UserError('Nro no pertenece a la secuencia.')
 
     @api.multi
@@ -248,7 +248,11 @@ class AccountWithdrawing(models.Model):
 
             sequence = wd.auth_id.sequence_id
             if self.type != 'out_invoice' and not number:
-                number = sequence.next_by_id()
+                number = '{0}{1}{2}'.format(
+                    wd.auth_id.serie_entidad,
+                    wd.auth_id.serie_emision,
+                    sequence.next_by_id()
+                )
             wd.write({'name': number})
         return True
 
@@ -330,8 +334,6 @@ class AccountWithdrawing(models.Model):
         for ret in self:
             if ret.move_ret_id:
                 raise UserError(utils.CODE703)
-            #elif ret.auth_id.is_electronic:
-            #    raise UserError(u'No puede anular un documento electrónico.')
             data = {'state': 'cancel'}
             if ret.to_cancel:
                 # FIXME
@@ -340,8 +342,8 @@ class AccountWithdrawing(models.Model):
                     data.update({'name': number})
                 else:
                     raise UserError(utils.CODE702)
-            self.tax_ids.write({'invoice_id': False})
-            self.write({'state': 'cancel'})
+        self.action_unlink()
+        self.write({'state': 'cancel'})
         return True
 
     @api.multi
@@ -353,9 +355,33 @@ class AccountWithdrawing(models.Model):
         return True
 
     @api.multi
+    def action_unlink(self):
+        """
+        Romper relacion entre factura y retencion
+        """
+        self.tax_ids.write({'invoice_id': False})
+        self.invoice_id.write({'retention_id': False})
+        self.write({'move_id': False})
+
+    @api.multi
     def action_print(self):
         # Método para imprimir comprobante contable
         return self.env['report'].get_action(
             self.move_id,
             'l10n_ec_withholding.account_withholding'
         )
+
+
+class WizardUnlinkInvoice(models.TransientModel):
+    _name = 'wizard.unlink.invoice'
+
+    def _get_docs(self):
+        docs = self._context.get('active_ids') or []
+        return [(6, 0, docs)]
+
+    doc_ids = fields.Many2many(comodel_name='account.retention', string='Retenciones', default=_get_docs)
+
+    @api.multi
+    def action_unlink(self):
+        for obj in self:
+            obj.doc_ids.action_unlink()
