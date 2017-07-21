@@ -20,7 +20,9 @@
                                 </div>
                                 <div class="col-xs-7">
                                     <span><strong>RUC </strong></span> <span t-esc="res_company.partner_id.identifier"/><br/>
-                                    <span><h4 style="text-align: center;">FACTURA</h4></span><br/>
+                                    <span t-if="o.type=='out_invoice'"><h4 style="text-align: center;">FACTURA</h4></span>
+                                    <span t-if="o.type=='out_refund'"><h4 style="text-align: center;">NOTA DE CRÉDITO</h4></span>
+                                    <br/>
                                     <span><strong>NUMERO</strong> </span><span t-esc="o.invoice_number"/><br/>
                                     <span><strong>NUMERO DE AUTORIZACION</strong></span><br/>
                                     <span t-esc="o.numero_autorizacion"/><br/>
