@@ -98,7 +98,8 @@ class Edocument(models.AbstractModel):
 
     def get_access_key(self, name):
         if name == 'account.invoice':
-            auth = self.company_id.partner_id.get_authorisation('out_invoice')
+            inv_type = self.type
+            auth = self.company_id.partner_id.get_authorisation(inv_type)
             ld = self.date_invoice.split('-')
             numero = getattr(self, 'invoice_number')
         elif name == 'account.retention':

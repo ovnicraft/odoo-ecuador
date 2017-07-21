@@ -21,6 +21,26 @@
       </field>
     </record>
 
+    <record id="email_template_enotacredito" model="mail.template">
+      <field name="name">Send eNotaCredito</field>
+      <field name="email_from">${('noresponder@proturis.com')|safe}</field>
+      <field name="subject">NOTA DE CRÉDITO ${object.company_id.name}</field>
+      <field name="partner_to">${object.partner_id.id}</field>
+      <field name="model_id" ref="account.model_account_invoice"/>
+      <field name="auto_delete" eval="False"/>
+      <field name="report_template" ref="account.account_invoices"/>
+      <field name="report_name">NOTACREDITO_${(object.number or '').replace('/','_')}</field>
+      <field name="lang">${object.partner_id.lang}</field>
+      <field name="body_html"><![CDATA[
+      Estimad@ ${ object.partner_id.name },
+
+      adjunto encontrará su nota de crédito electrónica número ${ object.invoice_number }, con fecha
+      de emisión ${ object.date_invoice } por un total de ${ object.amount_total }.
+
+      ]]>
+      </field>
+    </record>
+
     <record id="email_template_eretention" model="mail.template">
       <field name="name">Send eRetention</field>
       <field name="email_from">${('noresponder@proturis.com')|safe}</field>
