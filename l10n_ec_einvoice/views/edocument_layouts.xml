@@ -26,7 +26,7 @@
           name="l10n_ec_einvoice.report_einvoice"
           file="l10n_ec_einvoice.report_einvoice"
           attachment_use="True"
-          attachment="('FACTURA_'+(object.invoice_number or '').replace('/','')+'.pdf')"
+          attachment="('FACTURA_'+(object.invoice_number or '').replace('/','')+'.pdf') if object.type=='out_invoice' else ('NOTACREDITO_'+(object.invoice_number or '').replace('/','')+'.pdf')"
           />
 
     <report
