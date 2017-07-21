@@ -33,32 +33,37 @@ class Edocument(models.AbstractModel):
     clave_acceso = fields.Char(
         'Clave de Acceso',
         size=49,
-        readonly=True
+        readonly=True,
+        copy=False
     )
     numero_autorizacion = fields.Char(
         'Número de Autorización',
         size=37,
-        readonly=True
+        readonly=True,
+        copy=False
     )
     estado_autorizacion = fields.Char(
         'Estado de Autorización',
         size=64,
-        readonly=True
+        readonly=True,
+        copy=False
     )
     fecha_autorizacion = fields.Datetime(
         'Fecha Autorización',
-        readonly=True
+        readonly=True,
+        copy=False
     )
     ambiente = fields.Char(
         'Ambiente',
         size=64,
-        readonly=True
+        readonly=True,
+        copy=False
     )
-    autorizado_sri = fields.Boolean('¿Autorizado SRI?', readonly=True)
-    security_code = fields.Char('Código de Seguridad', size=8, readonly=True)
-    emission_code = fields.Char('Tipo de Emisión', size=1, readonly=True)
-    epayment_id = fields.Many2one('account.epayment', 'Forma de Pago')
-    sent = fields.Boolean('Enviado?')
+    autorizado_sri = fields.Boolean('¿Autorizado SRI?', readonly=True, copy=False)
+    security_code = fields.Char('Código de Seguridad', size=8, readonly=True, copy=False)
+    emission_code = fields.Char('Tipo de Emisión', size=1, readonly=True, copy=False)
+    epayment_id = fields.Many2one('account.epayment', 'Forma de Pago', copy=False)
+    sent = fields.Boolean('Enviado?', copy=False)
 
     def get_auth(self, document):
         partner = document.company_id.partner_id

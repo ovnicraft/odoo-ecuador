@@ -63,6 +63,8 @@ class AccountAuthorisation(models.Model):
         if self.is_electronic:
             self.active = True
         else:
+            if not self.expiration_date:
+                return
             now = datetime.strptime(time.strftime("%Y-%m-%d"), '%Y-%m-%d')
             due_date = datetime.strptime(self.expiration_date, '%Y-%m-%d')
             self.active = now < due_date
@@ -166,7 +168,7 @@ class AccountAuthorisation(models.Model):
         de [@num_start,@num_end]
         """
         if self.is_electronic and self.num_start <= number:
-            return True 
+            return True
         if self.num_start <= number <= self.num_end:
             return True
         return False

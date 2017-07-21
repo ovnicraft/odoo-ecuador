@@ -325,7 +325,7 @@ class Invoice(models.Model):
         * Cancelar retencion generada
         """
         TYPES_TO_VALIDATE = ['in_invoice', 'liq_purchase']
-        wd_number = False
+        number = False
         for inv in self:
             if self.has_retention and not self.retention_id:
                 # Autorizacion para Retenciones de la Empresa
@@ -335,22 +335,17 @@ class Invoice(models.Model):
                         u'No ha configurado la autorización de retenciones.'
                     )
 
-                if self.create_retention_type == 'manual':
-                    wd_number = inv.withholding_number
-
                 # move to constrains ?
                 if inv.create_retention_type == 'manual' and inv.withholding_number <= 0:  # noqa
                     raise UserError(u'El número de retención es incorrecto.')
                     # TODO: read next number
 
-                if inv.create_retention_type == 'auto' and inv.type in ['in_invoice', 'liq_purchase']:
-                    sequence = inv.journal_id.auth_retention_id.sequence_id
-                    wd_number = self.env['ir.sequence'].get(sequence.code)
-                    number = '{0}{1}{2}'.format(inv.journal_id.auth_retention_id.serie_entidad,
-                                            inv.journal_id.auth_retention_id.serie_emision,
-                                            wd_number.zfill(9))
-                else:
-                    number = wd_number
+                if inv.create_retention_type == 'manual':
+                    number = '{0}{1}{2}'.format(
+                        inv.journal_id.auth_retention_id.serie_entidad,
+                        inv.journal_id.auth_retention_id.serie_emision,
+                        inv.withholding_number
+                    )
 
                 ret_taxes = inv.tax_line_ids.filtered(lambda l: l.tax_id.tax_group_id.code in ['ret_vat_b', 'ret_vat_srv', 'ret_ir'])  # noqa
 
