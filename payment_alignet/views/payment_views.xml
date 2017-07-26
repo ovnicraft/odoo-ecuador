@@ -11,6 +11,21 @@
                         <field name="idcommerce" required="1"/>
                     </group>
                 </xpath>
+                <notebook position="inside">
+                    <page string="Seguridad" attrs="{'invisible': [('provider', '!=', 'alignet')]}">
+                        <div>
+                            <label for="vector" string="Vector"/>
+                            <field name="vector" required="1" class="oe_inline"/>  -
+                            <button string="Generar" name="generate_vector" icon="fa-cog" class="oe_inline" type="object"/>
+                        </div>
+                        <group>
+                            <field name="publickey_sign"/>
+                        </group>
+                        <group>
+                            <field name="publickey_crypt"/>
+                        </group>
+                    </page>
+                </notebook>
             </field>
         </record>
 

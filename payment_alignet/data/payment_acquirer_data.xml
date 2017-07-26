@@ -3,7 +3,7 @@
     <data>
 
         <record id="payment_acquirer_alignet" model="payment.acquirer">
-            <field name="name">VISA - MASTERCARD</field>
+            <field name="name">ALGINET (VISA - MASTERCARD)</field>
             <field name="image" type="base64" file="payment_alignet/static/src/img/alignet_icon.png"/>
             <field name="provider">alignet</field>
             <field name="company_id" ref="base.main_company"/>

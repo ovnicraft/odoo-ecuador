@@ -34,6 +34,9 @@ class PaymentAcquirerAlignet(models.Model):
         readonly=True
     )
     idcommerce = fields.Char('ID Commerce Asignado')
+    publickey_sign = fields.Text('Llave publica para Firma')
+    publickey_crypt = fields.Text('Llave publica para Cifrado')
+    vector = fields.Char('Vector de Inicialización', default='/')
 
     def _get_alignet_urls(self, environment):
         """ VPOS Alignet URLs """
@@ -42,8 +45,12 @@ class PaymentAcquirerAlignet(models.Model):
         else:
             return {'alignet_form_url': 'https://test2.alignetsac.com/VPOS/MM/transactionStart20.do'}
 
+    @api.multi
     def generate_vector(self):
-        return ''.join(random.choice('0123456789ABCDEF') for i in range(16))
+        import os
+        rb = os.urandom(8)
+        rand_hex = rb.encode('hex')
+        self.vector = rand_hex.upper()
 
     def alignet_vpos(self, values):
         publickey = b"""
@@ -327,8 +334,8 @@ class TxAuthorize(models.Model):
 class PaymentToken(models.Model):
     _inherit = 'payment.token'
 
-    authorize_profile = fields.Char(string='Authorize.net Profile ID', help='This contains the unique reference '
-                                    'for this partner/payment token combination in the Authorize.net backend')
+    authorize_profile = fields.Char(string='Alignet Profile ID', help='This contains the unique reference '
+                                    'for this partner/payment token combination in the Alignet backend')
 
     @api.model
     def authorize_create(self, values):
