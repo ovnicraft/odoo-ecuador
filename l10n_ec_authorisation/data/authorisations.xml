@@ -1,4 +1,5 @@
 <odoo>
+    <data noupdate="0">
         <record id="auth_out_invoice" model="account.authorisation">
             <field name="name">0123456789</field>
             <field name="serie_entidad">001</field>
@@ -51,4 +52,5 @@
             </function>
             <value eval="{'auth_retention_id': ref('auth_retention')}"/>
         </function>
+    </data>
 </odoo>

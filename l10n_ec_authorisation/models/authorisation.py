@@ -76,6 +76,8 @@ class AccountAuthorisation(models.Model):
         return self._context.get('in_type', 'externo')
 
     def _get_partner(self):
+        if self._context.get('in_type') == 'externo':
+            return
         partner = self.env.user.company_id.partner_id
         if self._context.get('partner_id'):
             partner = self._context.get('partner_id')
@@ -84,13 +86,16 @@ class AccountAuthorisation(models.Model):
     @api.model
     @api.returns('self', lambda value: value.id)
     def create(self, values):
-        res = self.search([('partner_id', '=', values['partner_id']),
-                           ('type_id', '=', values['type_id']),
-                           ('serie_entidad', '=', values['serie_entidad']),
-                           ('serie_emision', '=', values['serie_emision']),
-                           ('active', '=', True)])
+        domain = [
+            ('partner_id', '=', values['partner_id']),
+            ('type_id', '=', values['type_id']),
+            ('serie_entidad', '=', values['serie_entidad']),
+            ('serie_emision', '=', values['serie_emision']),
+            ('active', '=', True)
+        ]
+        res = self.search(domain)
         if res:
-            MSG = u'Ya existe una autorización activa para %s' % self.type_id.name  # noqa
+            MSG = u'Ya existe una autorización activa para este tipo de documento.'
             raise ValidationError(MSG)
 
         partner_id = self.env.user.company_id.partner_id.id
