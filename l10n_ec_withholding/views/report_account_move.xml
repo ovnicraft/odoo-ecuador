@@ -77,6 +77,30 @@
                                     </tr>
                                 </tfoot>
                             </table>
+                            <br/>
+                            <p t-if="has_analytics(o.line_ids)" style="text-align: left;"><strong>Detalle de Costos</strong></p>
+                            <table t-if="has_analytics(o.line_ids)" class="table-striped" style="font-size: 8pt">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center; width: 131.033px;">CODIGO</th>
+                                        <th style="text-align: center; width: 799.25px;">CENTRO DE COSTO</th>
+                                        <th style="text-align: center; width: 168.717px;">MONTO</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="font-size: 8pt">
+                                    <t t-foreach="group_analytic_lines(o.line_ids)" t-as="line">
+                                        <tr>
+                                            <td style="text-align: left; width: 131.033px;"><t t-esc="line.account_id.code or '**'"></t></td>
+                                            <td style="text-align: center; width: 799.25px; padding-left: 40px;">
+                                                <t t-esc="line.name"></t>
+                                            </td>
+                                            <td style="width: 168px; text-align: right;">
+                                                <span t-esc="abs(line.amount)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"></span>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
                             <br/><br/><br/>
                             <div class="row" style="text-align: center; font-size: 9px;">
                                 <div class="col-xs-4">
