@@ -135,7 +135,8 @@
                             <label string="Secuencia de Comprobante" for="num_start"
                                    attrs="{'required': [('is_electronic','=',False)]}"/>
                             <div>
-                                <field name="num_start" class="oe_inline" required="1" style="width: 30%% !important"/> -
+                                <field name="num_start" class="oe_inline" attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"
+                                       style="width: 30%% !important"/> -
                                 <field name="num_end" class="oe_inline" style="width: 30%% !important"
                                        attrs="{'invisible': [('is_electronic','=',True)], 'required': [('is_electronic','=',False)]}"/>
                             </div>
