@@ -4,7 +4,7 @@
         <template id="reporte_move" name="Reporte Comprobante de Movimiento">
             <t t-call="report.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <t t-call="report.internal_layout">
+                    <t t-call="report.external_layout">
                         <div class="page">
                             <p style="font-size: 8pt"><strong>Comprobante Contable Nro. : </strong><t t-esc="o.name"></t></p>
                             <p style="font-size: 8pt"><strong>Diario : </strong><t t-esc="o.journal_id.name"></t></p>
