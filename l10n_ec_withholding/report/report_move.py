@@ -28,12 +28,27 @@ class ReporteComprobante(models.AbstractModel):
             })
         return glines
 
+    def group_analytic_lines(self, lines):
+        analytic_lines = []
+        for line in lines:
+            if line.analytic_line_ids.exists():
+                analytic_lines.append(line.analytic_line_ids)
+        return analytic_lines
+
+    def has_analytics(self, lines):
+        for line in lines:
+            if line.analytic_line_ids.exists():
+                return True
+        return False
+
     @api.model
     def render_html(self, docids, data=None):
         docargs = {
             'doc_ids': docids,
             'doc_model': 'account.move',
             'docs': self.env['account.move'].browse(docids),
-            'groupby': self.groupby
+            'groupby': self.groupby,
+            'group_analytic_lines': self.group_analytic_lines,
+            'has_analytics': self.has_analytics
         }
         return self.env['report'].render('l10n_ec_withholding.reporte_move', values=docargs)  # noqa
