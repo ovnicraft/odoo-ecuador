@@ -405,6 +405,7 @@ class Invoice(models.Model):
             raise UserError('La retencion debe estar en estado ANULADO')
         return True
 
+
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
 
