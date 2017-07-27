@@ -26,6 +26,11 @@ class AccountInvoice(models.Model):
         'out_refund': 'out_refund.xml'
     }
 
+    EMAILTEMPLATES = {
+        'out_invoice': 'l10n_ec_einvoice.email_template_einvoice',
+        'out_refund': 'l10n_ec_einvoice.email_template_enotacredito'
+    }
+
     def _info_factura(self, invoice):
         """
         """
@@ -72,7 +77,6 @@ class AccountInvoice(models.Model):
 
         infoFactura.update({'totalConImpuestos': totalConImpuestos})
 
-        compensaciones = False
         comp = self.compute_compensaciones()
         if comp:
             compensaciones = True
@@ -222,14 +226,17 @@ class AccountInvoice(models.Model):
         '''
         This function send electronic invoice generated
         '''
+        self.ensure_one()
         if self.partner_id.email:
+            tmpl = self.EMAILTEMPLATES[self.type]
             attach = self.env['ir.attachment']
-            attachment_ids = attach.search([('res_model', '=', 'account.invoice'),('res_id','=',self.id)])
+            attachment_ids = attach.search(
+                [('res_model', '=', 'account.invoice'), ('res_id', '=', self.id)])
             if attachment_ids:
                 self.attachment_count = len(attachment_ids)
             self.send_document(
                 attachments=[a.id for a in attachment_ids],
-                tmpl='l10n_ec_einvoice.email_template_einvoice'
+                tmpl=tmpl
             )
         else:
             raise UserError('Ingresar correo electrónico en el cliente')
