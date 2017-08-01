@@ -127,7 +127,7 @@
                                 <field name="serie_entidad" class="oe_inline" placeholder="001" style="width: 30%% !important"/> -
                                 <field name="serie_emision" class="oe_inline" placeholder="001" style="width: 30%% !important"/>
                             </div>
-                            <field name="active"/>
+                            <field name="is_active"/>
                         </group>
                     </group>
                     <group>
@@ -154,9 +154,9 @@
         <field name="arch" type="xml">
             <search string="Buscar Autorizaciones">
                 <group>
-                    <filter icon="terp-camera_test" string="Activos" domain="[('active','=',True)]" help="Autorizaciones Activas"/>
+                    <filter icon="terp-camera_test" string="Activos" domain="[('is_active','=',True)]" help="Autorizaciones Activas"/>
                     <separator orientation="vertical"/>
-                    <filter name="unpaid" icon="terp-gtk-media-pause" string="Inactivos" domain="[('active','=',False)]" help="Autorizaciones Inactivas"/>
+                    <filter name="unpaid" icon="terp-gtk-media-pause" string="Inactivos" domain="[('is_active','=',False)]" help="Autorizaciones Inactivas"/>
                     <separator orientation="vertical"/>
                     <field name="name"/>
                     <field name="partner_id"/>

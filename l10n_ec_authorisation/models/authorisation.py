@@ -129,7 +129,7 @@ class AccountAuthorisation(models.Model):
     num_end = fields.Integer('Hasta')
     is_electronic = fields.Boolean('Documento Electrónico ?')
     expiration_date = fields.Date('Fecha de Vencimiento')
-    active = fields.Boolean(
+    is_active = fields.Boolean(
         compute='_compute_active',
         string='Activo',
         store=True,
