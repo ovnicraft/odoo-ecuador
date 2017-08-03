@@ -54,14 +54,13 @@ class AccountInvoice(models.Model):
             'importeTotal': '{:.2f}'.format(invoice.amount_pay),
             'moneda': 'DOLAR',
             'formaPago': invoice.epayment_id.code,
-            'valorRetIva': '0.00', #('{:.2f}'.format(invoice.taxed_ret_vatsrv + invoice.taxed_ret_vatb)),  # noqa
-            'valorRetRenta': '0.00' #'{:.2f}'.format(invoice.amount_tax_ret_ir)
+            'valorRetIva': '0.00',  # ('{:.2f}'.format(invoice.taxed_ret_vatsrv + invoice.taxed_ret_vatb)),  # noqa
+            'valorRetRenta': '0.00'  # '{:.2f}'.format(invoice.amount_tax_ret_ir)
         }
-        if company.company_registry:
-            infoFactura.update({'contribuyenteEspecial':
-                                company.company_registry})
-        else:
-            raise UserError('No ha determinado si es contribuyente especial.')
+        infoFactura.update({
+            'contribuyenteEspecial': company.company_registry,
+            'es_contribuyente_especial': company.contribuyente_especial
+        })
 
         totalConImpuestos = []
         for tax in invoice.tax_line_ids:
