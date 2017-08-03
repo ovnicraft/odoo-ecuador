@@ -123,3 +123,12 @@ class ResCompany(models.Model):
     accountant_id = fields.Many2one('res.partner', 'Contador')
     sri_id = fields.Many2one('res.partner', 'Servicio de Rentas Internas')
     cedula_rl = fields.Char('Cédula Representante Legal', size=10)
+    contribuyente_especial = fields.Selection(
+        [
+            ('SI', 'SI'),
+            ('NO', 'NO')
+        ],
+        string='Contribuyente Especial',
+        required=True,
+        default='NO'
+    )

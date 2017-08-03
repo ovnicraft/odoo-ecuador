@@ -61,13 +61,13 @@ class AccountAuthorisation(models.Model):
         Check the due_date to give the value active field
         """
         if self.is_electronic:
-            self.active = True
+            self.is_active = True
         else:
             if not self.expiration_date:
                 return
             now = datetime.strptime(time.strftime("%Y-%m-%d"), '%Y-%m-%d')
             due_date = datetime.strptime(self.expiration_date, '%Y-%m-%d')
-            self.active = now < due_date
+            self.is_active = now < due_date
 
     def _get_type(self):
         return self._context.get('type', 'in_invoice')  # pylint: disable=E1101
@@ -201,7 +201,7 @@ class ResPartner(models.Model):
         }
         code = map_type[type_document]
         for a in self.authorisation_ids:
-            if a.active and a.type_id.code == code:
+            if a.is_active and a.type_id.code == code:
                 return a
         return False
 

@@ -14,8 +14,10 @@
     <dirMatriz>{{ dirMatriz }}</dirMatriz>
   </infoTributaria>
   <infoFactura>
-    <fechaEmision>{{ fechaEmision }}</fechaEmision> {# dd/mm/aaaa #}
-    <contribuyenteEspecial>{{ contribuyenteEspecial }}</contribuyenteEspecial>
+      <fechaEmision>{{ fechaEmision }}</fechaEmision> {# dd/mm/aaaa #}
+      {% if es_contribuyente_especial == 'SI' %}
+      <contribuyenteEspecial>{{ contribuyenteEspecial }}</contribuyenteEspecial>
+      {% endif %}
     <obligadoContabilidad>{{ obligadoContabilidad }}</obligadoContabilidad>
     <tipoIdentificacionComprador>{{ tipoIdentificacionComprador }}</tipoIdentificacionComprador>
     <razonSocialComprador>{{ razonSocialComprador }}</razonSocialComprador>
