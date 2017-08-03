@@ -58,7 +58,7 @@ class AccountAuthorisation(models.Model):
     @api.depends('expiration_date')
     def _compute_active(self):
         """
-        Check the due_date to give the value active field
+        Check the due_date to give the value is_active field
         """
         if self.is_electronic:
             self.is_active = True
@@ -91,7 +91,7 @@ class AccountAuthorisation(models.Model):
             ('type_id', '=', values['type_id']),
             ('serie_entidad', '=', values['serie_entidad']),
             ('serie_emision', '=', values['serie_emision']),
-            ('active', '=', True)
+            ('is_active', '=', True)
         ]
         res = self.search(domain)
         if res:
@@ -163,7 +163,7 @@ class AccountAuthorisation(models.Model):
 
     _sql_constraints = [
         ('number_unique',
-         'unique(partner_id,expiration_date,type_id)',
+         'unique(partner_id,expiration_date,type_id,serie_entidad)',
          u'La relación de autorización, serie entidad, serie emisor y tipo, debe ser única.'),  # noqa
         ]
 
