@@ -3,7 +3,7 @@
   <data>
     <record id="email_template_einvoice" model="mail.template">
       <field name="name">Send eInvoice</field>
-      <field name="email_from">${('noresponder@proturis.com')|safe}</field>
+      <field name="email_from">${(object.company_id.email2)|safe}</field>
       <field name="subject">FACTURA ELECTRONICA ${object.company_id.name}</field>
       <field name="partner_to">${object.partner_id.id}</field>
       <field name="model_id" ref="account.model_account_invoice"/>
@@ -23,7 +23,7 @@
 
     <record id="email_template_enotacredito" model="mail.template">
       <field name="name">Send eNotaCredito</field>
-      <field name="email_from">${('noresponder@proturis.com')|safe}</field>
+      <field name="email_from">${(object.company_id.email2)|safe}</field>
       <field name="subject">NOTA DE CRÉDITO ${object.company_id.name}</field>
       <field name="partner_to">${object.partner_id.id}</field>
       <field name="model_id" ref="account.model_account_invoice"/>
@@ -43,7 +43,7 @@
 
     <record id="email_template_eretention" model="mail.template">
       <field name="name">Send eRetention</field>
-      <field name="email_from">${('noresponder@proturis.com')|safe}</field>
+      <field name="email_from">${(object.company_id.email2)|safe}</field>
       <field name="subject">RETENCIÓN ELECTRONICA ${object.company_id.name}</field>
       <field name="partner_to">${object.partner_id.id}</field>
       <field name="model_id" ref="l10n_ec_einvoice.model_account_retention"/>

@@ -39,6 +39,7 @@ class Company(models.Model):
         'Claves de Contingencia',
         help='Claves de contingencia relacionadas con esta empresa.'
     )
+    email2 = fields.Char('Email remitente para docs electrónicos')
 
 
 class CompanyContingencyKey(models.Model):
