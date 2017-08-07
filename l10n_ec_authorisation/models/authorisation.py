@@ -86,18 +86,6 @@ class AccountAuthorisation(models.Model):
     @api.model
     @api.returns('self', lambda value: value.id)
     def create(self, values):
-        domain = [
-            ('partner_id', '=', values['partner_id']),
-            ('type_id', '=', values['type_id']),
-            ('serie_entidad', '=', values['serie_entidad']),
-            ('serie_emision', '=', values['serie_emision']),
-            ('is_active', '=', True)
-        ]
-        res = self.search(domain)
-        if res:
-            MSG = u'Ya existe una autorización activa para este tipo de documento.'
-            raise ValidationError(MSG)
-
         partner_id = self.env.user.company_id.partner_id.id
         if values['partner_id'] == partner_id:
             typ = self.env['account.ats.doc'].browse(values['type_id'])
@@ -177,6 +165,20 @@ class AccountAuthorisation(models.Model):
         if self.num_start <= number <= self.num_end:
             return True
         return False
+
+    def _check_data(self):
+        domain = [
+            ('partner_id', '=', self.partner_id),
+            ('type_id', '=', self.type_id),
+            ('serie_entidad', '=', self.serie_entidad),
+            ('serie_emision', '=', self.serie_emision),
+            ('is_active', '=', True)
+        ]
+        res = self.search(domain)
+        if res:
+            MSG = u'Ya existe una autorización activa para este tipo de documento.'
+            raise ValidationError(MSG)
+
 
 
 class ResPartner(models.Model):
