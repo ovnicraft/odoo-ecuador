@@ -267,6 +267,7 @@ class Invoice(models.Model):
         default='auto'
     )
     reference = fields.Char(copy=False)
+    epayment_id = fields.Many2one('account.epayment', 'Forma de Pago', copy=False)
 
     @api.onchange('withholding_number')
     def _onchange_withholding(self):
