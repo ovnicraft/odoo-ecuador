@@ -128,7 +128,7 @@ class AccountWithdrawing(models.Model):
                 raise UserError(msg)
             auth_document = self.render_authorized_document(auth)
             self.update_document(auth, [access_key, emission_code])
-            attach = self.add_attachment(auth_document, auth)
+            self.add_attachment(auth_document, auth)
             return True
 
     @api.multi

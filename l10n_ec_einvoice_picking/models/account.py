@@ -156,4 +156,3 @@ class AccountInvoiceLine(models.Model):
                 template['product_uom_qty'] = diff_quantity
                 done += moves.create(template)
         return done
-

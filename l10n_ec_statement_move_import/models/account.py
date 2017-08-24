@@ -70,13 +70,13 @@ class AccountBankStatement(models.Model):
         style = xlwt.easyxf('font:height 200, bold True, name Arial; align: horiz center, vert center;borders: top medium,right medium,bottom medium,left medium')
         style0 = xlwt.easyxf('font: name Times New Roman, color-index black, bold on')
         for obj in self:
-            worksheet.write_merge(0, 2, 0, 11, str(obj.company_id.name) + u'\n Bank Reconciliation\n' + str(datetime.datetime.now(timezone('America/Guayaquil'))),style)
+            worksheet.write_merge(0, 2, 0, 11, str(obj.company_id.name) + u'\n Bank Reconciliation\n' + str(datetime.datetime.now(timezone('America/Guayaquil'))), style)
             fila = 4
             columna = 0
             worksheet.write(fila, columna, obj.name, style0)
             fila = fila + 1
             worksheet.write(fila, 0, 'Fecha: ' + obj.date, style0)
-            worksheet.write(fila, 6, 'Usuario: ' + obj.user_id.partner_id.name , style0)
+            worksheet.write(fila, 6, 'Usuario: ' + obj.user_id.partner_id.name, style0)
             fila = fila + 1
             worksheet.write(fila, 0, 'Saldo Inicial: ' + str(obj.balance_start), style0)
             worksheet.write(fila, 6, 'Saldo Final: ' + str(obj.balance_end_real), style0)
@@ -146,7 +146,7 @@ class AccountBankStatement(models.Model):
             tnc = tdnc - tcnc
             worksheet.write(fila, 9, 'Total No conciliado:' + str(tnc), style0)
             fila = fila + 1
-            worksheet.write(fila, 9, 'Total Bancos:' + str(obj.balance_start + totalc + tnc) , style0)
+            worksheet.write(fila, 9, 'Total Bancos:' + str(obj.balance_start + totalc + tnc), style0)
             fp = cStringIO.StringIO()
             workbook.save(fp)
             dataxls = {

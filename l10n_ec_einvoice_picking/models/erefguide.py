@@ -148,9 +148,9 @@ class StockPicking(models.Model):
 
         destinatarios = []
         partner = erefguide.partner_id
-        invoice = self.env['account.invoice'].search([('picking_id','=',self.id)])
+        invoice = self.env['account.invoice'].search([('picking_id', '=', self.id)])
         inv_number = '{0}-{1}-{2}'.format(invoice.invoice_number[:3], invoice.invoice_number[3:6], invoice.invoice_number[6:])
-        #for line in erefguide.move_lines:
+        # for line in erefguide.move_lines:
         destinatario = {
             'identificacionDestinatario': partner.identifier,
             'razonSocialDestinatario': partner.name,

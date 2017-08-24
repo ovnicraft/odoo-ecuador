@@ -9,7 +9,6 @@
     'data': [
         'security/ir.model.access.csv',
         'data/data_einvoice.xml',
-        'data/account.epayment.csv',
         'views/edocument_layouts.xml',
         'edi/einvoice_edi.xml',
         'views/einvoice_view.xml',

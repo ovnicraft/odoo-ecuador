@@ -20,7 +20,6 @@ class WizardPicking(models.TransientModel):
         [('manual', 'Manual'), ('auto', 'Automático')], 'Crear albarán', default='auto', required=True)
     picking_id = fields.Many2one('stock.picking', 'Albarán/Guía')
 
-
     @api.one
     def act_create_picking(self):
         invoice = self._context.get('active_id')

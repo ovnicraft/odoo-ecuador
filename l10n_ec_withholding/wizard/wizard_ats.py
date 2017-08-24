@@ -33,6 +33,7 @@ tpEntidad = {
     '0': '00'
 }
 
+
 class AccountAts(dict):
     """
     representacion del ATS

@@ -203,7 +203,7 @@ class AccountInvoice(models.Model):
                 raise UserError(msg)
             auth_einvoice = self.render_authorized_einvoice(auth)
             self.update_document(auth, [access_key, emission_code])
-            attach = self.add_attachment(auth_einvoice, auth)
+            self.add_attachment(auth_einvoice, auth)
             message = """
             DOCUMENTO ELECTRONICO GENERADO <br><br>
             CLAVE DE ACCESO: %s <br>

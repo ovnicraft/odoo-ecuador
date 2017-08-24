@@ -180,7 +180,6 @@ class AccountAuthorisation(models.Model):
             raise ValidationError(MSG)
 
 
-
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
