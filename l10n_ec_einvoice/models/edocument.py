@@ -13,13 +13,6 @@ from . import utils
 from ..xades.sri import SriService
 
 
-class AccountEpayment(models.Model):
-    _name = 'account.epayment'
-
-    code = fields.Char('Código')
-    name = fields.Char('Forma de Pago')
-
-
 class Edocument(models.AbstractModel):
 
     _name = 'account.edocument'

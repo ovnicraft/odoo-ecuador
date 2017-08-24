@@ -16,6 +16,13 @@ from odoo.exceptions import (
 from . import utils
 
 
+class AccountEpayment(models.Model):
+    _name = 'account.epayment'
+
+    code = fields.Char('Código')
+    name = fields.Char('Forma de Pago')
+
+
 class AccountWithdrawing(models.Model):
     """ Implementacion de documento de retencion """
 
