@@ -55,7 +55,6 @@ class Edocument(models.AbstractModel):
     autorizado_sri = fields.Boolean('¿Autorizado SRI?', readonly=True, copy=False)
     security_code = fields.Char('Código de Seguridad', size=8, readonly=True, copy=False)
     emission_code = fields.Char('Tipo de Emisión', size=1, readonly=True, copy=False)
-    epayment_id = fields.Many2one('account.epayment', 'Forma de Pago', copy=False)
     sent = fields.Boolean('Enviado?', copy=False)
 
     def get_auth(self, document):
