@@ -464,15 +464,15 @@ class WizardAts(models.TransientModel):
         }
 
     @api.multi
-    def _default_type(self):
-        return self.env.ref('l10n_ec_withholding.fiscal_range_type')
+    def _get_default_type(self):
+        return self.env.ref('l10n_ec_withholding.fiscalyear_range_type')
 
     fcname = fields.Char('Nombre de Archivo', size=50, readonly=True)
     fcname_errores = fields.Char('Archivo Errores', size=50, readonly=True)
     type_id = fields.Many2one(
         'date.range.type',
         'Tipo',
-        default=_default_type
+        default=_get_default_type
     )
     period_id = fields.Many2one(
         'date.range',
