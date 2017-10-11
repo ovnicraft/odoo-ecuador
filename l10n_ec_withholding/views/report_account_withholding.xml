@@ -62,20 +62,22 @@
                             </div>
                             <div class="row" style="border-style: solid; padding-top: 5px; margin-top: 5px; margin-top: 5px; margin-bottom: 10px;">
                                 <t t-foreach="o.tax_ids" t-as="line">
-                                    <div class="col-xs-2" style="text-align: center;">
-                                        <span t-field="line.fiscal_year"/>
-                                    </div>
-                                    <div class="col-xs-2" style="text-align: center;">
-                                        <span t-field="line.base"/>
-                                    </div>
-                                    <div class="col-xs-4" style="text-align: center;">
-                                        <span t-field="line.group_id.name"/> - <span t-field="line.code"/>
-                                    </div>
-                                    <div class="col-xs-2" style="text-align: center;">
-                                        <span t-field="line.tax_id.percent_report"/> %
-                                    </div>
-                                    <div class="col-xs-2" style="text-align: right;">
-                                        <span t-esc="'%.2f' % abs(line.amount)"/>
+                                    <div class="row">
+                                        <div class="col-xs-2" style="text-align: center;">
+                                            <span t-field="line.fiscal_year"/>
+                                        </div>
+                                        <div class="col-xs-2" style="text-align: center;">
+                                            <span t-field="line.base"/>
+                                        </div>
+                                        <div class="col-xs-4" style="text-align: center;">
+                                            <span t-field="line.group_id.name"/> - <span t-field="line.code"/>
+                                        </div>
+                                        <div class="col-xs-2" style="text-align: center;">
+                                            <span t-field="line.tax_id.percent_report"/> %
+                                        </div>
+                                        <div class="col-xs-2" style="text-align: right;">
+                                            <span t-esc="'%.2f' % abs(line.amount)"/>
+                                        </div>
                                     </div>
                                 </t>
                             </div>
