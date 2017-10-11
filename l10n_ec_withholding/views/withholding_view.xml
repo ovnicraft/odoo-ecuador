@@ -49,7 +49,7 @@
                     <field name="amount_total" string="Total a Pagar" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 </xpath>
                 <xpath expr="//button[@name='action_invoice_open'][last()]" position="after">
-                    <button name="print_retention" string="Retención" type="object" states="open,paid" class="btn btn-primary" icon="fa-print"/>
+                    <button name="action_print" string="Retención" type="object" states="open,paid" class="btn btn-primary" icon="fa-print"/>
                     <button name="print_move" string="Comprobante" type="object" states="open,paid" class="btn btn-primary" icon="fa-print"/>
                 </xpath>
                 <xpath expr="//field[@name='retention_id']" position="before">
@@ -114,7 +114,7 @@
                     <header>
                         <button name="action_cancel" string="Anular" type="object" states="draft,done"/>
                         <button name="button_validate" string="Validar" class="oe_highlight" type="object" states="draft"/>
-                        <button name="print_retention" string="Retención" type="object" states="done" class="btn btn-primary" icon="fa-print"/>
+                        <button name="action_print" string="Retención" type="object" states="done" class="btn btn-primary" icon="fa-print"/>
                         <button name="action_draft" string="Volver a Borrador" type="object" states="cancel"/>
                         <field name="state" widget="statusbar"/>
                     </header>

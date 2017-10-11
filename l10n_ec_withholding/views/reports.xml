@@ -8,5 +8,13 @@
             report_type="qweb-pdf"
             name="l10n_ec_withholding.reporte_move"
             file="l10n_ec_withholding.reporte_move"/>
+
+        <report
+            id="account_withholding_report"
+            string="Comprobante de Retención"
+            model="account.retention"
+            report_type="qweb-html"
+            name="l10n_ec_withholding.report_account_withholding"
+            file="l10n_ec_withholding.report_account_withholding"/>
     </data>
 </odoo>

@@ -374,8 +374,8 @@ class AccountWithdrawing(models.Model):
     def action_print(self):
         # Método para imprimir comprobante contable
         return self.env['report'].get_action(
-            self.move_id,
-            'l10n_ec_withholding.account_withholding'
+            self,
+            'l10n_ec_withholding.report_account_withholding'
         )
 
 
