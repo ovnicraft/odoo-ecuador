@@ -10,6 +10,17 @@
             file="l10n_ec_withholding.reporte_move"/>
 
         <report
+            id="account.account_invoices"
+            model="account.invoice"
+            string="Invoices"
+            report_type="qweb-pdf"
+            name="account.report_invoice"
+            file="l10n_ec_withholding.report_invoice"
+            attachment_use="True"
+            attachment="(object.state in ('open','paid')) and ('INV'+(object.number or '').replace('/','')+'.pdf')"
+        />
+
+        <report
             id="account_withholding_report"
             string="Comprobante de Retención"
             model="account.retention"

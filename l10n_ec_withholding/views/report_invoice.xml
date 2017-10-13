@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_account_withholding">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="report.external_layout">
+                        <div class="page" style="text-align: left;">
+                            <div class="row" style="border-style: solid; padding-top: 5px; margin-top: 5px; margin-top: 5px; margin-bottom: 10px;">
+                                <div class="col-xs-12">
+                                    <div class="col-xs-2" style="font-weight: bold;">Empresa:</div>
+                                    <div class="col-xs-10">
+                                        <span t-field="o.partner_id.identifier"/> - <span t-field="o.partner_id.name"/>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-2" style="font-weight: bold;">Dirección:</div>
+                                    <div class="col-xs-10">
+                                        <span t-field="o.partner_id.street"/>, <span t-field="o.partner_id.street2"/>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-2" style="font-weight: bold;">Fecha Emisión:</div>
+                                    <div class="col-xs-4">
+                                        <span t-field="o.date"/>
+                                    </div>
+                                    <div class="col-xs-2" style="font-weight: bold;">Nro Retención:</div>
+                                    <div class="col-xs-4">
+                                        <span t-field="o.name"/>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-2" style="font-weight: bold;">Documento:</div>
+                                    <div class="col-xs-4">
+                                        <span t-field="o.type"/>
+                                    </div>
+                                    <div class="col-xs-2" style="font-weight: bold;">Nro. Documento:</div>
+                                    <div class="col-xs-4">
+                                        <span t-field="o.invoice_id.reference"/>
+                                    </div>
+                                </div>
+                            </div> <!-- linea 1 -->
+                            <!-- Detalle -->
+                            <div class="row">
+                                <div class="col-xs-12" style="text-align: center; border-style: solid; padding-top: 5px; margin-top: 5px; margin-top: 5px;">
+                                    <div class="col-xs-2">
+                                        <span style="font-weight: bold;">EJERCICIO FISCAL</span>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <span style="font-weight: bold;">BASE IMP.</span>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <span style="font-weight: bold;">IMPUESTO</span>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <span style="font-weight: bold;">PORCENT.</span>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <div style="font-weight: bold;">RETENIDO</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="border-style: solid; padding-top: 5px; margin-top: 5px; margin-top: 5px; margin-bottom: 10px;">
+                                <t t-foreach="o.tax_ids" t-as="line">
+                                    <div class="row">
+                                        <div class="col-xs-2" style="text-align: center;">
+                                            <span t-field="line.fiscal_year"/>
+                                        </div>
+                                        <div class="col-xs-2" style="text-align: center;">
+                                            <span t-field="line.base"/>
+                                        </div>
+                                        <div class="col-xs-4" style="text-align: center;">
+                                            <span t-field="line.group_id.name"/> - <span t-field="line.code"/>
+                                        </div>
+                                        <div class="col-xs-2" style="text-align: center;">
+                                            <span t-field="line.tax_id.percent_report"/> %
+                                        </div>
+                                        <div class="col-xs-2" style="text-align: right;">
+                                            <span t-esc="'%.2f' % abs(line.amount)"/>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="row" style="border-style: solid; padding-top: 5px; margin-top: 5px; margin-top: 5px; margin-bottom: 10px;">
+                                <div class="col-xs-10" style="text-align: right; font-weight: bold;">
+                                    <span>TOTAL:</span>
+                                </div>
+                                <div class="col-xs-2" style="text-align: right;">
+                                    <span t-esc=" '%.2f' % abs(o.amount_total)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
