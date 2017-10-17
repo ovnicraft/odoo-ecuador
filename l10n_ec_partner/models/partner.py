@@ -73,7 +73,9 @@ class ResPartner(models.Model):
     @api.one
     @api.depends('identifier')
     def _compute_tipo_persona(self):
-        if not self.identifier:
+        if self.type_identifier == 'pasaporte':
+            self.tipo_persona = '0'
+        elif not self.identifier:
             self.tipo_persona = '0'
         elif int(self.identifier[2]) <= 6:
             self.tipo_persona = '6'
