@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <template id="report_account_withholding">
+        <template id="account.report_invoice_document">
             <t t-call="report.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-call="report.external_layout">
