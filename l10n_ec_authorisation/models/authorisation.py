@@ -253,10 +253,11 @@ class AccountInvoice(models.Model):
         emitir el documento.
         """
         res = super(AccountInvoice, self)._onchange_partner_id()
+        tipo = self.type and self.type or self.env.context.get('type')
         if not self.partner_id:
             return res
-        if self.type not in self._DOCUMENTOS_EMISION:
-            auth = self.partner_id.get_authorisation(self.type)
+        if tipo not in self._DOCUMENTOS_EMISION:
+            auth = self.partner_id.get_authorisation(tipo)
             if not auth:
                 action = self.env.ref('l10n_ec_authorisation.action_account_authoriz_out_form')
                 raise RedirectWarning('No ha configurado una autorización en el Partner', action, 'Configurar')
