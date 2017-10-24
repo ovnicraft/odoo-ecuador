@@ -12,9 +12,9 @@
         <report
             id="account.account_invoices"
             model="account.invoice"
-            string="Invoices"
+            string="Facturas"
             report_type="qweb-pdf"
-            name="account.report_invoice"
+            name="l10n_ec_withholding.report_invoice"
             file="l10n_ec_withholding.report_invoice"
             attachment_use="True"
             attachment="(object.state in ('open','paid')) and ('INV'+(object.number or '').replace('/','')+'.pdf')"

@@ -425,6 +425,13 @@ class Invoice(models.Model):
             raise UserError('La retencion debe estar en estado ANULADO')
         return True
 
+    @api.multi
+    def invoice_print(self):
+        return self.env['report'].get_action(
+            self,
+            'l10n_ec_withholding.report_invoice'
+        )
+
 
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'

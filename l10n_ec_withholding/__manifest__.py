@@ -19,9 +19,10 @@
         'data/account.fiscal.position.csv',
         'data/account.epayment.csv',
         'data/data.xml',
+        'views/reports.xml',
         'views/report_account_move.xml',
         'views/report_account_withholding.xml',
-        'views/reports.xml',
+        'views/report_invoice.xml',
         'views/withholding_view.xml',
         'wizard/withholding_wizard.xml'
     ]
