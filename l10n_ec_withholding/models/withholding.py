@@ -107,6 +107,7 @@ class AccountWithdrawing(models.Model):
     in_type = fields.Selection(
         [
             ('ret_in_invoice', u'Retención a Proveedor'),
+            ('ret_liq_purchase', u'Retención a Proveedor'),
             ('ret_out_invoice', u'Retención de Cliente')
         ],
         string='Tipo',

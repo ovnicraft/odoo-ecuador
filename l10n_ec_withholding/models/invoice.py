@@ -45,6 +45,20 @@ class Invoice(models.Model):
         return self.env['account.journal'].search(domain, limit=1)
 
     @api.multi
+    def name_get(self):
+        TYPES = {
+            'out_invoice': _('Invoice'),
+            'in_invoice': _('Vendor Bill'),
+            'out_refund': _('Refund'),
+            'in_refund': _('Vendor Refund'),
+            'liq_purchase': _('Liquidación de Compra')
+        }
+        result = []
+        for inv in self:
+            result.append((inv.id, "%s %s" % (inv.number or TYPES[inv.type], inv.name or '')))
+        return result
+
+    @api.multi
     def print_move(self):
         # Método para imprimir comprobante contable
         return self.env['report'].get_action(
@@ -133,6 +147,11 @@ class Invoice(models.Model):
 
     PRECISION_DP = dp.get_precision('Account')
 
+    journal_id = fields.Many2one(
+        'account.journal',
+        string='Journal',
+        default=_default_journal,
+        domain="[('type', 'in', {'out_invoice': ['sale'], 'out_refund': ['sale'], 'in_refund': ['purchase'], 'in_invoice': ['purchase'], 'liq_purchase': ['purchase']}.get(type, [])), ('company_id', '=', company_id)]")
     amount_ice = fields.Monetary(
         string='ICE',
         store=True,

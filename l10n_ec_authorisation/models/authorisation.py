@@ -212,7 +212,7 @@ class AccountJournal(models.Model):
 
     auth_out_invoice_id = fields.Many2one(
         'account.authorisation',
-        'Secuencia Facturas'
+        'Secuencia Facturas / Liq. Compra'
     )
     auth_out_refund_id = fields.Many2one(
         'account.authorisation',
@@ -233,7 +233,7 @@ class AccountInvoice(models.Model):
     def _onchange_journal_id(self):
         super(AccountInvoice, self)._onchange_journal_id()
         if self.journal_id and self.type in self._DOCUMENTOS_EMISION:
-            if self.type == 'out_invoice':
+            if self.type in ['out_invoice', 'liq_purchase']:
                 self.auth_inv_id = self.journal_id.auth_out_invoice_id
             elif self.type == 'out_refund':
                 self.auth_inv_id = self.journal_id.auth_out_refund_id
